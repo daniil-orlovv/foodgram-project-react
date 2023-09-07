@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (Recipe, RecipeIngredient, Tag, Ingredient, Unit, Favorite,
-                     Follow, ShopList)
+                     Follow, Shop)
 
 
 class IngredientInline(admin.TabularInline):
@@ -61,7 +61,7 @@ class FavoriteAdmin(admin.ModelAdmin):
     list_filter = ('user', 'favorite')
 
 
-class ShopListAdmin(admin.ModelAdmin):
+class ShopAdmin(admin.ModelAdmin):
     list_display = (
         'user',
         'item',
@@ -77,4 +77,4 @@ admin.site.register(Ingredient, ProductAdmin)
 admin.site.register(Unit, UnitAdmin)
 admin.site.register(Favorite, FavoriteAdmin)
 admin.site.register(Follow)
-admin.site.register(ShopList, ShopListAdmin)
+admin.site.register(Shop, ShopAdmin)

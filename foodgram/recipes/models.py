@@ -92,7 +92,7 @@ class Favorite(models.Model):
     )
 
 
-class ShopList(models.Model):
+class Shop(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
