@@ -12,7 +12,7 @@ class Unit(models.Model):
         return self.title
 
 
-class Product(models.Model):
+class Ingredient(models.Model):
     title = models.CharField(max_length=150, blank=False, null=False)
 
     def __str__(self):
@@ -67,7 +67,7 @@ class Recipe(models.Model):
 class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(
-        Product,
+        Ingredient,
         on_delete=models.CASCADE, blank=False, null=False)
     amount = models.FloatField(blank=False, null=False)
     unit = models.ForeignKey(
@@ -100,7 +100,7 @@ class ShopList(models.Model):
         null=False
     )
     item = models.ForeignKey(
-        Product,
+        Ingredient,
         on_delete=models.CASCADE,
         blank=False,
         null=False

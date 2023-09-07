@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import (Recipe, RecipeIngredient, Tag, Product, Unit, Favorite,
+from .models import (Recipe, RecipeIngredient, Tag, Ingredient, Unit, Favorite,
                      Follow, ShopList)
 
 
@@ -14,13 +14,9 @@ class RecipeAdmin(admin.ModelAdmin):
     list_display = (
         'author',
         'title',
-        'picture',
-        'description',
-        'tag',
-        'cooking_time'
     )
     search_fields = ('title',)
-    list_filter = ('tag',)
+    list_filter = ('author', 'title', 'tag',)
     readonly_fields = ('author',)
 
 
@@ -78,7 +74,7 @@ class ShopListAdmin(admin.ModelAdmin):
 admin.site.register(Recipe, RecipeAdmin)
 admin.site.register(RecipeIngredient, IngredientAdmin)
 admin.site.register(Tag, TagAdmin)
-admin.site.register(Product, ProductAdmin)
+admin.site.register(Ingredient, ProductAdmin)
 admin.site.register(Unit, UnitAdmin)
 admin.site.register(Favorite, FavoriteAdmin)
 admin.site.register(Follow)
