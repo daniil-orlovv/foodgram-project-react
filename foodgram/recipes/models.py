@@ -55,7 +55,8 @@ class Recipe(models.Model):
         on_delete=models.CASCADE,
         blank=False,
         null=False,
-        related_name='recipes',  # Вроде можно получить все рецепты, которые связаны с тэгом
+        related_name='recipes',  # Вроде можно получить все рецепты, которые
+        # связаны с тэгом
     )
     cooking_time = models.DurationField(blank=False, null=False)
 
