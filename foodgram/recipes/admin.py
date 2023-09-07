@@ -22,12 +22,11 @@ class RecipeAdmin(admin.ModelAdmin):
 
 class IngredientAdmin(admin.ModelAdmin):
     list_display = (
-        'recipe',
         'ingredient',
-        'amount',
         'unit',
     )
     search_fields = ('recipe', 'ingredient',)
+    list_filter = ('ingredient',)
 
 
 class ProductAdmin(admin.ModelAdmin):
