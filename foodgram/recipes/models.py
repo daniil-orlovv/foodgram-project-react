@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import UserManager
 
 
 User = get_user_model()
@@ -47,10 +50,10 @@ class Recipe(models.Model):
         null=False,
         related_name='recipes'
     )
-    title = models.CharField(max_length=200, blank=False, null=False)
+    name = models.CharField(max_length=200, blank=False, null=False)
     picture = models.ImageField(blank=False, null=False)
-    description = models.TextField(blank=False, null=False)
-    tag = models.ForeignKey(
+    text = models.TextField(blank=False, null=False)
+    tags = models.ForeignKey(
         Tag,
         on_delete=models.CASCADE,
         blank=False,

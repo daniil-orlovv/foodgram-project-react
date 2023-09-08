@@ -13,10 +13,10 @@ class RecipeAdmin(admin.ModelAdmin):
     inlines = [IngredientInline]
     list_display = (
         'author',
-        'title',
+        'name',
     )
-    search_fields = ('title',)
-    list_filter = ('author', 'title', 'tag',)
+    search_fields = ('name',)
+    list_filter = ('author', 'name', 'tags',)
     readonly_fields = ('author',)
 
 
