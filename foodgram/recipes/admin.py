@@ -1,12 +1,12 @@
 from django.contrib import admin
-from .models import (Recipe, RecipeIngredient, Tag, Ingredient, Unit, Favorite,
+from .models import (Recipe, RecipeIngredient, Tag, Ingredient, Favorite,
                      Follow, Shop)
 
 
 class IngredientInline(admin.TabularInline):
     model = RecipeIngredient
     extra = 1
-    fields = ('recipe', 'ingredient', 'amount', 'unit',)
+    fields = ('recipe', 'name', 'amount',)
 
 
 class RecipeAdmin(admin.ModelAdmin):
@@ -23,24 +23,9 @@ class RecipeAdmin(admin.ModelAdmin):
 class IngredientAdmin(admin.ModelAdmin):
     list_display = (
         'ingredient',
-        'unit',
     )
     search_fields = ('recipe', 'ingredient',)
     list_filter = ('ingredient',)
-
-
-class ProductAdmin(admin.ModelAdmin):
-    list_display = (
-        'title',
-    )
-    search_fields = ('title',)
-
-
-class UnitAdmin(admin.ModelAdmin):
-    list_display = (
-        'title',
-    )
-    search_fields = ('title',)
 
 
 class TagAdmin(admin.ModelAdmin):
@@ -73,8 +58,6 @@ class ShopAdmin(admin.ModelAdmin):
 admin.site.register(Recipe, RecipeAdmin)
 admin.site.register(RecipeIngredient, IngredientAdmin)
 admin.site.register(Tag, TagAdmin)
-admin.site.register(Ingredient, ProductAdmin)
-admin.site.register(Unit, UnitAdmin)
 admin.site.register(Favorite, FavoriteAdmin)
 admin.site.register(Follow)
 admin.site.register(Shop, ShopAdmin)

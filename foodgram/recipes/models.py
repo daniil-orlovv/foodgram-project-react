@@ -1,25 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import UserManager
 
 
 User = get_user_model()
-
-
-class Unit(models.Model):
-    title = models.CharField(max_length=100, blank=False, null=False)
-
-    def __str__(self):
-        return self.title
-
-
-class Ingredient(models.Model):
-    title = models.CharField(max_length=150, blank=False, null=False)
-
-    def __str__(self):
-        return self.title
 
 
 class Tag(models.Model):
@@ -37,6 +20,14 @@ class Tag(models.Model):
         default='#FFFFFF'
     )
     slug = models.SlugField(unique=True)
+
+    def __str__(self):
+        return self.title
+
+
+class Ingredient(models.Model):
+    name = models.CharField(max_length=150, blank=False, null=False)
+    unit = models.CharField(max_length=20, blank=False, null=False)
 
     def __str__(self):
         return self.title
@@ -62,6 +53,7 @@ class Recipe(models.Model):
         # связаны с тэгом
     )
     cooking_time = models.DurationField(blank=False, null=False)
+    ingredients = models.ManyToManyField(Ingredient, through='RecipeIngredient')
 
     def __str__(self):
         return self.title
@@ -73,12 +65,6 @@ class RecipeIngredient(models.Model):
         Ingredient,
         on_delete=models.CASCADE, blank=False, null=False)
     amount = models.FloatField(blank=False, null=False)
-    unit = models.ForeignKey(
-        Unit,
-        on_delete=models.CASCADE,
-        blank=False,
-        null=False
-    )
 
 
 class Favorite(models.Model):
