@@ -53,7 +53,10 @@ class Recipe(models.Model):
         # связаны с тэгом
     )
     cooking_time = models.DurationField(blank=False, null=False)
-    ingredients = models.ManyToManyField(Ingredient, through='RecipeIngredient')
+    ingredients = models.ManyToManyField(
+        Ingredient,
+        through='RecipeIngredient'
+    )
 
     def __str__(self):
         return self.title
