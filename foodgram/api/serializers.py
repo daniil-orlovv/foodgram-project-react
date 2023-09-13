@@ -11,21 +11,79 @@ class IngredientSerializer(serializers.ModelSerializer):
         )
 
 
-class RecipeIngredientSerializer(serializers.ModelSerializer):
+class IngredientM2MSerializer(serializers.ModelSerializer):
+    ingredient = serializers.PrimaryKeyRelatedField(
+        queryset=Ingredient.objects.all()
+    )
 
     class Meta:
         model = RecipeIngredient
         fields = (
-            'ingredients',
-            'amount',
+            'ingredient',
+            'amount'
         )
 
 
+class RecipeCrUpSerializer(serializers.ModelSerializer):
+    ingredients = IngredientM2MSerializer(
+        many=True,
+        source='ingredients_recipe'
+    )
+
+    class Meta:
+        model = Recipe
+        fields = (
+            'id',
+            'tags',
+            'author',
+            'ingredients',
+            'is_favorited',
+            'is_in_shopping_cart',
+            'name',
+            'text',
+            'cooking_time'
+        )
+
+        def create(self, validated_data):
+            ingredients = validated_data.pop('ingredients')
+            recipes = Recipe.objects.create(**validated_data)
+
+            for ingredient in ingredients:
+                cur_ingr = ingredient.get('ingredient')
+                amount = ingredient.get('amount')
+                recipes.ingredients.add(
+                    cur_ingr,
+                    through_defaults={
+                        'amount': amount,
+                    }
+                )
+
+            return recipes
 
 
+class RecipeIngredientReadSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(
+        source='ingredient.id',
+    )
+    ingredient = serializers.CharField(
+        source='ingredient.name',
+    )
+    amount = serializers.ReadOnlyField()
 
-class RecipeSerializer(serializers.ModelSerializer):
-    ingredients = RecipeIngredientSerializer(many=True)
+    class Meta:
+        model = RecipeIngredient
+        fields = (
+            'id',
+            'ingredient',
+            'amount'
+        )
+
+
+class RecipeReadSerializer(serializers.ModelSerializer):
+    ingredients = RecipeIngredientReadSerializer(
+        many=True,
+        source='recipeingredient_set',
+    )
 
     class Meta:
         model = Recipe

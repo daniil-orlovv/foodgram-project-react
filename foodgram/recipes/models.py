@@ -56,7 +56,7 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(
         Ingredient,
         through='RecipeIngredient',
-        related_name='recipes_ingredients'
+        related_name='ingredients_recipe'
     )
     is_favorited = models.IntegerField(default=0)
     is_in_shopping_cart = models.IntegerField(default=0)
@@ -75,7 +75,7 @@ class RecipeIngredient(models.Model):
         on_delete=models.CASCADE,
         blank=False,
         null=False,
-        related_name='ingredient'
+        related_name='ingredient_recipeingredient'
     )
     amount = models.FloatField(blank=False, null=False)
 
