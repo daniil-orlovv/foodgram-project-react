@@ -12,14 +12,17 @@ class Tag(models.Model):
         null=False,
         unique=True
     )
-    color_code = models.CharField(
+    color = models.CharField(
         max_length=7,
         blank=False,
-        null=False,
+        null=True,
         unique=True,
         default='#FFFFFF'
     )
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(
+        max_length=200,
+        null=True,
+        unique=True)
 
     def __str__(self):
         return self.title
@@ -29,9 +32,6 @@ class Ingredient(models.Model):
     name = models.CharField(max_length=150, blank=False, null=False)
     unit = models.CharField(max_length=20, blank=False, null=False)
 
-    def __str__(self):
-        return self.title
-
 
 class Recipe(models.Model):
     author = models.ForeignKey(
@@ -39,7 +39,7 @@ class Recipe(models.Model):
         on_delete=models.CASCADE,
         blank=False,
         null=False,
-        related_name='recipes'
+        related_name='recipes_author'
     )
     name = models.CharField(max_length=200, blank=False, null=False)
     picture = models.ImageField(blank=False, null=False)
@@ -49,24 +49,34 @@ class Recipe(models.Model):
         on_delete=models.CASCADE,
         blank=False,
         null=False,
-        related_name='recipes',  # Вроде можно получить все рецепты, которые
+        related_name='recipes_tags',  # Вроде можно получить все рецепты, которые
         # связаны с тэгом
     )
     cooking_time = models.DurationField(blank=False, null=False)
     ingredients = models.ManyToManyField(
         Ingredient,
-        through='RecipeIngredient'
+        through='RecipeIngredient',
+        related_name='recipes_ingredients'
     )
+    is_favorited = models.IntegerField(default=0)
+    is_in_shopping_cart = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.title
+        return self.name
 
 
 class RecipeIngredient(models.Model):
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE
+    )
     ingredient = models.ForeignKey(
         Ingredient,
-        on_delete=models.CASCADE, blank=False, null=False)
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+        related_name='ingredient'
+    )
     amount = models.FloatField(blank=False, null=False)
 
 

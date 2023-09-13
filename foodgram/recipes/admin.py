@@ -6,7 +6,7 @@ from .models import (Recipe, RecipeIngredient, Tag, Ingredient, Favorite,
 class IngredientInline(admin.TabularInline):
     model = RecipeIngredient
     extra = 1
-    fields = ('recipe', 'name', 'amount',)
+    fields = ('recipe', 'ingredient', 'amount',)
 
 
 class RecipeAdmin(admin.ModelAdmin):
@@ -22,16 +22,17 @@ class RecipeAdmin(admin.ModelAdmin):
 
 class IngredientAdmin(admin.ModelAdmin):
     list_display = (
-        'ingredient',
+        'id',
+        'name',
     )
-    search_fields = ('recipe', 'ingredient',)
-    list_filter = ('ingredient',)
+    search_fields = ('name',)
+    list_filter = ('name',)
 
 
 class TagAdmin(admin.ModelAdmin):
     list_display = (
         'title',
-        'color_code',
+        'color',
         'slug'
     )
     search_fields = ('title',)
@@ -56,7 +57,6 @@ class ShopAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Recipe, RecipeAdmin)
-admin.site.register(RecipeIngredient, IngredientAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Favorite, FavoriteAdmin)
 admin.site.register(Follow)
