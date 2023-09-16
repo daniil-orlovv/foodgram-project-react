@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from recipes.models import Recipe, Tag, Shop, Ingredient, Follow, Favorite, RecipeIngredient
+from recipes.models import (Recipe, Tag, Shop, Ingredient, Follow, Favorite,
+                            RecipeIngredient)
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -13,7 +14,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 class IngredientM2MSerializer(serializers.ModelSerializer):
     ingredient = serializers.PrimaryKeyRelatedField(
-        queryset=Ingredient.objects.all()
+        queryset=Ingredient.objects.all(),
     )
 
     class Meta:
@@ -27,7 +28,7 @@ class IngredientM2MSerializer(serializers.ModelSerializer):
 class RecipeCrUpSerializer(serializers.ModelSerializer):
     ingredients = IngredientM2MSerializer(
         many=True,
-        source='ingredients_recipe'
+        source='ingredients_recipe',
     )
 
     class Meta:
@@ -46,19 +47,19 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
 
         def create(self, validated_data):
             ingredients = validated_data.pop('ingredients')
-            recipes = Recipe.objects.create(**validated_data)
+            recipe = Recipe.objects.create(**validated_data)
 
             for ingredient in ingredients:
                 cur_ingr = ingredient.get('ingredient')
                 amount = ingredient.get('amount')
-                recipes.ingredients.add(
+                recipe.ingredients.add(
                     cur_ingr,
                     through_defaults={
                         'amount': amount,
                     }
                 )
 
-            return recipes
+            return recipe
 
 
 class RecipeIngredientReadSerializer(serializers.ModelSerializer):
@@ -67,22 +68,29 @@ class RecipeIngredientReadSerializer(serializers.ModelSerializer):
     )
     ingredient = serializers.CharField(
         source='ingredient.name',
+        required=False
     )
     amount = serializers.ReadOnlyField()
+    unit = serializers.CharField(
+        source='ingredient.unit',
+        required=False
+    )
 
     class Meta:
         model = RecipeIngredient
         fields = (
             'id',
             'ingredient',
-            'amount'
+            'amount',
+            'unit'
         )
 
 
 class RecipeReadSerializer(serializers.ModelSerializer):
     ingredients = RecipeIngredientReadSerializer(
         many=True,
-        source='recipeingredient_set',
+        source='recipe',
+        read_only=True
     )
 
     class Meta:

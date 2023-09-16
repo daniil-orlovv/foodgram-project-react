@@ -29,16 +29,16 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=150, blank=False, null=False)
-    unit = models.CharField(max_length=20, blank=False, null=False)
+    name = models.CharField(max_length=150, blank=True)
+    unit = models.CharField(max_length=20, blank=True)
 
 
 class Recipe(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
         related_name='recipes_author'
     )
     name = models.CharField(max_length=200, blank=False, null=False)
@@ -56,7 +56,9 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(
         Ingredient,
         through='RecipeIngredient',
-        related_name='ingredients_recipe'
+        related_name='ingredients_recipe',
+        blank=True,
+        null=True
     )
     is_favorited = models.IntegerField(default=0)
     is_in_shopping_cart = models.IntegerField(default=0)
@@ -68,13 +70,14 @@ class Recipe(models.Model):
 class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
         Recipe,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='recipe'
     )
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
         related_name='ingredient_recipeingredient'
     )
     amount = models.FloatField(blank=False, null=False)
