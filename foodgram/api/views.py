@@ -21,7 +21,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     #     serializer.save(author=self.request.user)
 
 
-class TagViewSet(viewsets.ModelViewSet):
+class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
