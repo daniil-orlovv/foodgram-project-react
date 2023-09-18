@@ -30,7 +30,7 @@ class Tag(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=150, blank=True)
-    unit = models.CharField(max_length=20, blank=True)
+    measurement_unit = models.CharField(max_length=20, blank=True)
 
 
 class Recipe(models.Model):

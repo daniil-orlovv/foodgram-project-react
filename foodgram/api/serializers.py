@@ -1,4 +1,3 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from recipes.models import (Recipe, Tag, Shop, Ingredient, Follow, Favorite,
                             RecipeIngredient)
@@ -8,8 +7,9 @@ class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
         fields = (
+            'id',
             'name',
-            'unit'
+            'measurement_unit'
         )
 
 
