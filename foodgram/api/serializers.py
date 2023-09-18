@@ -14,23 +14,24 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class IngredientM2MSerializer(serializers.ModelSerializer):
-    ingredient = serializers.PrimaryKeyRelatedField(
+    id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all(),
         required=False
+    )
+    amount = serializers.FloatField(
     )
 
     class Meta:
         model = RecipeIngredient
         fields = (
-            'ingredient',
+            'id',
             'amount'
         )
 
 
 class RecipeCrUpSerializer(serializers.ModelSerializer):
     ingredients = IngredientM2MSerializer(
-        many=True,
-        # source='recipe',
+        many=True
     )
 
     class Meta:
@@ -55,11 +56,10 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
         for ingredient in ingredients:
             cur_ingr = ingredient.get('id')
             cur_amount = ingredient.get('amount')
-            ingredient_obj = Ingredient.objects.get(pk=cur_ingr)
 
             RecipeIngredient.objects.create(
                 recipe=recipe,
-                ingredient=ingredient_obj,
+                ingredient=cur_ingr,
                 amount=cur_amount
             )
         return recipe

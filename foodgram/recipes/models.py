@@ -25,7 +25,7 @@ class Tag(models.Model):
         unique=True)
 
     def __str__(self):
-        return self.title
+        return self.name
 
 
 class Ingredient(models.Model):

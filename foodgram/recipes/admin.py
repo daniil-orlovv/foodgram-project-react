@@ -35,7 +35,7 @@ class TagAdmin(admin.ModelAdmin):
         'color',
         'slug'
     )
-    search_fields = ('title',)
+    search_fields = ('name',)
 
 
 class FavoriteAdmin(admin.ModelAdmin):
