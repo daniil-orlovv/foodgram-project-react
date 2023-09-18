@@ -31,7 +31,7 @@ class IngredientAdmin(admin.ModelAdmin):
 
 class TagAdmin(admin.ModelAdmin):
     list_display = (
-        'title',
+        'name',
         'color',
         'slug'
     )
