@@ -116,7 +116,7 @@ class TagSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tag
-        fields = ('id', 'title', 'color_code', 'slug')
+        fields = ('id', 'title', 'color', 'slug')
 
 
 class ShopSerializer(serializers.ModelSerializer):
