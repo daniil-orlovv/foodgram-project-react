@@ -38,8 +38,7 @@ class Recipe(models.Model):
         User,
         on_delete=models.CASCADE,
         blank=True,
-        null=True,
-        related_name='recipes_author'
+        null=True
     )
     name = models.CharField(max_length=200, blank=False, null=False)
     picture = models.ImageField(blank=False, null=False)
@@ -48,17 +47,12 @@ class Recipe(models.Model):
         Tag,
         on_delete=models.CASCADE,
         blank=False,
-        null=False,
-        related_name='recipes_tags',  # Вроде можно получить все рецепты, которые
-        # связаны с тэгом
+        null=False
     )
     cooking_time = models.DurationField(blank=False, null=False)
     ingredients = models.ManyToManyField(
         Ingredient,
-        through='RecipeIngredient',
-        related_name='ingredients_recipe',
-        blank=True,
-        null=True
+        through='RecipeIngredient'
     )
     is_favorited = models.IntegerField(default=0)
     is_in_shopping_cart = models.IntegerField(default=0)
@@ -71,14 +65,13 @@ class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='recipe'
+        related_name='recipes'
     )
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
         blank=True,
         null=True,
-        related_name='ingredient_recipeingredient'
     )
     amount = models.FloatField(blank=False, null=False)
 

@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from recipes.models import (Recipe, Tag, Shop, Ingredient, Follow, Favorite,
                             RecipeIngredient)
@@ -15,6 +16,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 class IngredientM2MSerializer(serializers.ModelSerializer):
     ingredient = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all(),
+        required=False
     )
 
     class Meta:
@@ -28,7 +30,7 @@ class IngredientM2MSerializer(serializers.ModelSerializer):
 class RecipeCrUpSerializer(serializers.ModelSerializer):
     ingredients = IngredientM2MSerializer(
         many=True,
-        source='ingredients_recipe',
+        # source='recipe',
     )
 
     class Meta:
@@ -45,21 +47,22 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
             'cooking_time'
         )
 
-        def create(self, validated_data):
-            ingredients = validated_data.pop('ingredients')
-            recipe = Recipe.objects.create(**validated_data)
+    def create(self, validated_data):
+        print(validated_data)
+        ingredients = validated_data.pop('ingredients')
+        recipe = Recipe.objects.create(**validated_data)
 
-            for ingredient in ingredients:
-                cur_ingr = ingredient.get('ingredient')
-                amount = ingredient.get('amount')
-                recipe.ingredients.add(
-                    cur_ingr,
-                    through_defaults={
-                        'amount': amount,
-                    }
-                )
+        for ingredient in ingredients:
+            cur_ingr = ingredient.get('id')
+            cur_amount = ingredient.get('amount')
+            ingredient_obj = Ingredient.objects.get(pk=cur_ingr)
 
-            return recipe
+            RecipeIngredient.objects.create(
+                recipe=recipe,
+                ingredient=ingredient_obj,
+                amount=cur_amount
+            )
+        return recipe
 
 
 class RecipeIngredientReadSerializer(serializers.ModelSerializer):
@@ -89,7 +92,7 @@ class RecipeIngredientReadSerializer(serializers.ModelSerializer):
 class RecipeReadSerializer(serializers.ModelSerializer):
     ingredients = RecipeIngredientReadSerializer(
         many=True,
-        source='recipe',
+        source='recipes',
         read_only=True
     )
 

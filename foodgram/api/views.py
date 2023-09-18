@@ -9,15 +9,16 @@ from .serializers import (RecipeCrUpSerializer, RecipeReadSerializer,
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
+    serializer_class = RecipeCrUpSerializer
 
-    def get_serializer_class(self):
-        if self.action == 'list' or 'retrieve':
-            return RecipeReadSerializer
-        if self.action == 'create' or 'update':
-            return RecipeCrUpSerializer
+    # def get_serializer_class(self):
+    #     if self.action == 'list' or 'retrieve':
+    #         return RecipeReadSerializer
+    #     if self.action == 'create' or 'update':
+    #         return RecipeCrUpSerializer
 
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+    # def perform_create(self, serializer):
+    #     serializer.save(author=self.request.user)
 
 
 class TagViewSet(viewsets.ModelViewSet):
