@@ -18,8 +18,6 @@ class IngredientM2MSerializer(serializers.ModelSerializer):
         queryset=Ingredient.objects.all(),
         required=False
     )
-    amount = serializers.FloatField(
-    )
 
     class Meta:
         model = RecipeIngredient
@@ -49,13 +47,14 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        print(validated_data)
+
         ingredients = validated_data.pop('ingredients')
         recipe = Recipe.objects.create(**validated_data)
 
         for ingredient in ingredients:
             cur_ingr = ingredient.get('id')
             cur_amount = ingredient.get('amount')
+            breakpoint()
 
             RecipeIngredient.objects.create(
                 recipe=recipe,

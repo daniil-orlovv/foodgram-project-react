@@ -73,7 +73,7 @@ class RecipeIngredient(models.Model):
         blank=True,
         null=True,
     )
-    amount = models.FloatField(blank=False, null=False)
+    amount = models.FloatField(blank=True, null=True)
 
 
 class Favorite(models.Model):
