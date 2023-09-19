@@ -16,7 +16,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 class IngredientM2MSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all(),
-        required=False
+        required=True
     )
 
     class Meta:
@@ -54,7 +54,6 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
         for ingredient in ingredients:
             cur_ingr = ingredient.get('id')
             cur_amount = ingredient.get('amount')
-            breakpoint()
 
             RecipeIngredient.objects.create(
                 recipe=recipe,
@@ -62,6 +61,7 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
                 amount=cur_amount
             )
         return recipe
+        breakpoint()
 
 
 class RecipeIngredientReadSerializer(serializers.ModelSerializer):

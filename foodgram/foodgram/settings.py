@@ -15,7 +15,7 @@ SECRET_KEY = 'yp86z$6vt4%d$ij!a0q06@dzpf_o7!tzi2ir8yb%+8)&4oy81y'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -135,7 +135,6 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
-
 
 DJOSER = {
     'LOGIN_FIELD': 'email',
