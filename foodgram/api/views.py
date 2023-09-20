@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
 from recipes.models import Recipe, Tag, Shop, Follow, Ingredient, Favorite
-from .serializers import (RecipeCrUpSerializer,  # RecipeReadSerializer,
+from .serializers import (RecipeCrUpSerializer,  RecipeReadSerializer,
                           TagSerializer, ShopSerializer,
                           FollowSerializer, IngredientSerializer,
                           FavoriteSerializer)
@@ -9,16 +9,15 @@ from .serializers import (RecipeCrUpSerializer,  # RecipeReadSerializer,
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    serializer_class = RecipeCrUpSerializer
 
-    # def get_serializer_class(self):
-    #     if self.action == 'list' or 'retrieve':
-    #         return RecipeReadSerializer
-    #     if self.action == 'create' or 'update':
-    #         return RecipeCrUpSerializer
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return RecipeReadSerializer
+        elif self.action in ['create', 'update']:
+            return RecipeCrUpSerializer
 
-    # def perform_create(self, serializer):
-    #     serializer.save(author=self.request.user)
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):

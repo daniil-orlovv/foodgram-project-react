@@ -37,7 +37,7 @@ class IngredientM2MSerializer(serializers.ModelSerializer):
         model = RecipeIngredient
         fields = (
             'id',
-            'amount'
+            'amount',
         )
 
 
@@ -75,7 +75,10 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
                 amount=cur_amount
             )
         return recipe
-        breakpoint()
+
+    def to_representation(self, instance):
+        recipe_serializer = RecipeReadSerializer(instance)
+        return recipe_serializer.data
 
 
 class RecipeIngredientReadSerializer(serializers.ModelSerializer):
@@ -87,8 +90,8 @@ class RecipeIngredientReadSerializer(serializers.ModelSerializer):
         required=False
     )
     amount = serializers.ReadOnlyField()
-    unit = serializers.CharField(
-        source='ingredient.unit',
+    measurement_unit = serializers.CharField(
+        source='ingredient.measurement_unit',
         required=False
     )
 
@@ -98,7 +101,7 @@ class RecipeIngredientReadSerializer(serializers.ModelSerializer):
             'id',
             'ingredient',
             'amount',
-            'unit'
+            'measurement_unit'
         )
 
 
