@@ -56,11 +56,9 @@ class Recipe(models.Model):
     name = models.CharField(max_length=200, blank=False, null=False)
     picture = models.ImageField(blank=False, null=False)
     text = models.TextField(blank=False, null=False)
-    tags = models.ForeignKey(
+    tags = models.ManyToManyField(
         Tag,
-        on_delete=models.CASCADE,
-        blank=False,
-        null=False
+        through='RecipeTag'
     )
     cooking_time = models.DurationField(blank=False, null=False)
     ingredients = models.ManyToManyField(
@@ -72,6 +70,18 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class RecipeTag(models.Model):
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='recipetag_recipe'
+    )
+    tag = models.ForeignKey(
+        Tag,
+        on_delete=models.CASCADE
+    )
 
 
 class RecipeIngredient(models.Model):

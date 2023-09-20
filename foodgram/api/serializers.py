@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from recipes.models import (Recipe, Tag, Shop, Ingredient, Follow, Favorite,
-                            RecipeIngredient, CustomUser)
+                            RecipeIngredient, CustomUser, RecipeTag)
 from djoser.serializers import UserCreateSerializer
 
 
@@ -15,6 +15,14 @@ class CustomUserCreateSerializer(UserCreateSerializer):
             'last_name',
             'password'
         )
+
+
+class TagSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=True)
+
+    class Meta:
+        model = Tag
+        fields = ('id', 'name', 'color', 'slug')
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -45,6 +53,10 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
     ingredients = IngredientM2MSerializer(
         many=True
     )
+    tags = serializers.PrimaryKeyRelatedField(
+        queryset=Tag.objects.all(),
+        many=True
+    )
 
     class Meta:
         model = Recipe
@@ -63,6 +75,7 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
 
         ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(**validated_data)
 
         for ingredient in ingredients:
@@ -74,6 +87,9 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
                 ingredient=cur_ingr,
                 amount=cur_amount
             )
+        for tag_id in tags:
+            RecipeTag.objects.create(recipe=recipe, tag=tag_id)
+
         return recipe
 
     def to_representation(self, instance):
@@ -111,6 +127,10 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         source='recipes',
         read_only=True
     )
+    tags = TagSerializer(
+        many=True,
+        read_only=True,
+    )
 
     class Meta:
         model = Recipe
@@ -125,14 +145,6 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             'text',
             'cooking_time'
         )
-
-
-class TagSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(required=True)
-
-    class Meta:
-        model = Tag
-        fields = ('id', 'name', 'color', 'slug')
 
 
 class ShopSerializer(serializers.ModelSerializer):
