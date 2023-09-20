@@ -1,8 +1,20 @@
 from django.db import models
-from django.contrib.auth import get_user_model
+# from django.contrib.auth import get_user_model
+
+from django.contrib.auth.models import AbstractUser
 
 
-User = get_user_model()
+# User = get_user_model()
+
+
+class CustomUser(AbstractUser):
+    email = models.EmailField(max_length=254, unique=True)
+    username = models.CharField(max_length=150)
+    first_name = models.CharField(max_length=150)
+    last_name = models.CharField(max_length=150)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ('username', 'first_name', 'last_name')
 
 
 class Tag(models.Model):
@@ -35,7 +47,7 @@ class Ingredient(models.Model):
 
 class Recipe(models.Model):
     author = models.ForeignKey(
-        User,
+        CustomUser,
         on_delete=models.CASCADE,
         blank=True,
         null=True
@@ -78,7 +90,7 @@ class RecipeIngredient(models.Model):
 
 class Favorite(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE,
+        CustomUser, on_delete=models.CASCADE,
         blank=False,
         null=False
     )
@@ -92,7 +104,7 @@ class Favorite(models.Model):
 
 class Shop(models.Model):
     user = models.ForeignKey(
-        User,
+        CustomUser,
         on_delete=models.CASCADE,
         blank=False,
         null=False
@@ -106,10 +118,10 @@ class Shop(models.Model):
 
 
 class Follow(models.Model):
-    user = models.ForeignKey(User,
+    user = models.ForeignKey(CustomUser,
                              on_delete=models.CASCADE,
                              related_name='follower')
-    author = models.ForeignKey(User,
+    author = models.ForeignKey(CustomUser,
                                on_delete=models.CASCADE,
                                related_name='following')
 

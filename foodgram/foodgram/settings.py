@@ -139,3 +139,5 @@ SIMPLE_JWT = {
 DJOSER = {
     'LOGIN_FIELD': 'email',
 }
+
+AUTH_USER_MODEL = 'recipes.CustomUser'
