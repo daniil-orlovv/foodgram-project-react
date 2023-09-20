@@ -138,6 +138,10 @@ SIMPLE_JWT = {
 
 DJOSER = {
     'LOGIN_FIELD': 'email',
+    'SERIALIZERS': {
+        'user_create': 'api.serializers.CustomUserCreateSerializer',
+        'user': 'djoser.serializers.UserSerializer',
+    },
 }
 
 AUTH_USER_MODEL = 'recipes.CustomUser'
