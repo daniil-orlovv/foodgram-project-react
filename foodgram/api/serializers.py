@@ -144,6 +144,9 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         many=True,
         read_only=True,
     )
+    author = CustomUserSerializer(
+        read_only=True
+    )
 
     class Meta:
         model = Recipe

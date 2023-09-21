@@ -65,8 +65,8 @@ class Recipe(models.Model):
         Ingredient,
         through='RecipeIngredient'
     )
-    is_favorited = models.IntegerField(default=0)
-    is_in_shopping_cart = models.IntegerField(default=0)
+    is_favorited = models.BooleanField(default=False)
+    is_in_shopping_cart = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
