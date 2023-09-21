@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.pagination import PageNumberPagination
 
 from recipes.models import Recipe, Tag, Shop, Follow, Ingredient, Favorite
 from .serializers import (RecipeCrUpSerializer,  RecipeReadSerializer,
@@ -23,6 +24,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    pagination_class = None
 
 
 class ShopViewSet(viewsets.ModelViewSet):
@@ -33,6 +35,7 @@ class ShopViewSet(viewsets.ModelViewSet):
 class IngredientViewSet(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
+    pagination_class = None
 
 
 class FavoriteViewSet(viewsets.ModelViewSet):
