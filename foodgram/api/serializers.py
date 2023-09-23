@@ -105,6 +105,28 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
 
         return recipe
 
+    def update(self, instance, validated_data):
+        object_id = instance.pk
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+        for ingredient in ingredients:
+            cur_ingr = ingredient.get('id')
+            cur_amount = ingredient.get('amount')
+            RecipeIngredient.objects.filter(recipe=object_id).update(
+                ingredient=cur_ingr,
+                amount=cur_amount
+            )
+        for tag_id in tags:
+            RecipeTag.objects.filter(recipe=object_id).update(
+                tag=tag_id)
+        instance.image = validated_data.get('image', instance.image)
+        instance.name = validated_data.get('name', instance.name)
+        instance.text = validated_data.get('text', instance.text)
+        instance.cooking_time = validated_data.get(
+            'cooking_time', instance.cooking_time)
+        instance.save()
+        return instance
+
     def to_representation(self, instance):
         recipe_serializer = RecipeReadSerializer(instance)
         return recipe_serializer.data

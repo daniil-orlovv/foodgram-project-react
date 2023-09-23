@@ -13,7 +13,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:
             return RecipeReadSerializer
-        elif self.action in ['create', 'update']:
+        elif self.action in ['create', 'partial_update', 'delete']:
             return RecipeCrUpSerializer
 
     def perform_create(self, serializer):

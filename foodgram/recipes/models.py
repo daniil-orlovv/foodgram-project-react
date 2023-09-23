@@ -54,7 +54,7 @@ class Recipe(models.Model):
         null=True
     )
     name = models.CharField(max_length=200, blank=False, null=False)
-    picture = models.ImageField(blank=False, null=False)
+    image = models.ImageField(blank=False, null=False)
     text = models.TextField(blank=False, null=False)
     tags = models.ManyToManyField(
         Tag,
