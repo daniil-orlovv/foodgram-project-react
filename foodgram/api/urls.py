@@ -9,7 +9,7 @@ router = SimpleRouter()
 router.register('tags', TagViewSet, basename='tags')
 router.register('recipes', RecipeViewSet, basename='recipes')
 router.register('recipes/download_shopping_cart', ShopViewSet, basename='shop')
-router.register('recipes/id/favorite', FavoriteViewSet, basename='favorite')
+router.register(r'recipes/(?P<id>\d+)/favorite', FavoriteViewSet, basename='favorite')
 router.register('users/subscriptions', FollowViewSet, basename='subscribe')
 router.register('ingredients', IngredientViewSet, basename='ingredients')
 
