@@ -105,7 +105,7 @@ class Favorite(models.Model):
         blank=False,
         null=False
     )
-    favorite = models.ForeignKey(
+    recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
         blank=False,
