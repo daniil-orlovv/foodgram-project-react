@@ -1,10 +1,11 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.response import Response
 
 from recipes.models import Recipe, Tag, Shop, Follow, Ingredient, Favorite
-from .serializers import (RecipeCrUpSerializer,  RecipeReadSerializer,
-                          TagSerializer, ShopSerializer,
-                          FollowSerializer, IngredientSerializer,
-                          FavoriteSerializer)
+from api.serializers import (RecipeCrUpSerializer,  RecipeReadSerializer,
+                             TagSerializer, ShopSerializer,
+                             FollowSerializer, IngredientSerializer,
+                             FavoriteSerializer)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -37,11 +38,25 @@ class IngredientViewSet(viewsets.ModelViewSet):
     pagination_class = None
 
 
+class FollowViewSet(viewsets.ModelViewSet):
+    queryset = Follow.objects.all()
+    serializer_class = FollowSerializer
+
+
 class FavoriteViewSet(viewsets.ModelViewSet):
     queryset = Favorite.objects.all()
     serializer_class = FavoriteSerializer
 
+    def create(self, request, *args, **kwargs):
+        id_recipe = kwargs.get('id')
+        recipe = Recipe.objects.get(id=id_recipe)
+        user = request.user
+        Favorite.objects.create(user=user, recipe=recipe)
+        serializer = FavoriteSerializer(recipe)
+        print(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-class FollowViewSet(viewsets.ModelViewSet):
-    queryset = Follow.objects.all()
-    serializer_class = FollowSerializer
+    def perform_destroy(self, instance):
+        id_recipe = self.kwargs['id']
+        recipe = Recipe.objects.get(id=id_recipe)
+        Favorite.objects.get(recipe=recipe).delete()
