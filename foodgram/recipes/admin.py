@@ -41,10 +41,10 @@ class TagAdmin(admin.ModelAdmin):
 class FavoriteAdmin(admin.ModelAdmin):
     list_display = (
         'user',
-        'favorite',
+        'recipe',
     )
-    search_fields = ('user', 'favorite')
-    list_filter = ('user', 'favorite')
+    search_fields = ('user', 'recipe')
+    list_filter = ('user', 'recipe')
 
 
 class ShopAdmin(admin.ModelAdmin):
