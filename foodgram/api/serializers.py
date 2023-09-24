@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from recipes.models import (Recipe, Tag, Shop, Ingredient, Follow, Favorite,
-                            RecipeIngredient, CustomUser, RecipeTag)
+from recipes.models import (Recipe, Tag, Shop, Ingredient, Follow,
+                            RecipeIngredient, CustomUser, RecipeTag,
+                            Favorite)
 from djoser.serializers import UserCreateSerializer, UserSerializer
 
 
@@ -192,9 +193,13 @@ class ShopSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(required=False)
+    image = serializers.ImageField(required=False)
+    cooking_time = serializers.ReadOnlyField()
+
     class Meta:
-        model = Favorite
-        fields = ('user', 'favorite')
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class FollowSerializer(serializers.ModelSerializer):
