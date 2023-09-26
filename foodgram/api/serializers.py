@@ -192,7 +192,7 @@ class ShopSerializer(serializers.ModelSerializer):
         fields = ('user', 'item')
 
 
-class FavoriteSerializer(serializers.ModelSerializer):
+class FavoriteShopSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=False)
     image = serializers.ImageField(required=False)
     cooking_time = serializers.ReadOnlyField()
