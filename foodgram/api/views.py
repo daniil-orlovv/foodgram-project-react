@@ -53,8 +53,9 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         serializer = FavoriteShopSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def destroy(self, instance):
-        id_recipe = self.kwargs['id']
+    @action(detail=True, methods=['delete'])
+    def delete(self, request, *args, **kwargs):
+        id_recipe = kwargs.get('id')
         recipe = Recipe.objects.get(id=id_recipe)
         Favorite.objects.get(recipe=recipe).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
