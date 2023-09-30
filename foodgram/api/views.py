@@ -99,3 +99,6 @@ class ShopViewSet(viewsets.ModelViewSet):
         recipe = Recipe.objects.get(id=id_recipe)
         Shop.objects.get(item=recipe).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def download(self, request, *args, **kwargs):
+        ...
