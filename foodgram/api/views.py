@@ -53,6 +53,12 @@ class FollowViewSet(viewsets.ModelViewSet):
         serializer = FollowSerializer(author)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @action(detail=True, methods=['delete'])
+    def delete(self, request, *args, **kwargs):
+        id_author = kwargs.get('id')
+        Follow.objects.get(author=id_author).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class FavoriteViewSet(viewsets.ModelViewSet):
     queryset = Favorite.objects.all()
