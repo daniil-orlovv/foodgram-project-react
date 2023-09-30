@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from recipes.models import (Recipe, Tag, Shop, Ingredient, Follow,
-                            RecipeIngredient, CustomUser, RecipeTag,
-                            Favorite)
+                            RecipeIngredient, CustomUser, RecipeTag)
 from djoser.serializers import UserCreateSerializer, UserSerializer
 
 

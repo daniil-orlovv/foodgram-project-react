@@ -1,11 +1,13 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, permissions, mixins
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from recipes.models import Recipe, Tag, Shop, Follow, Ingredient, Favorite
 from api.serializers import (RecipeCrUpSerializer,  RecipeReadSerializer,
                              TagSerializer, ShopSerializer,
                              FollowSerializer, IngredientSerializer,
-                             FavoriteSerializer)
+                             FavoriteShopSerializer)
+from api.permissions import OnlyAuthorized
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -27,11 +29,6 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = None
 
 
-class ShopViewSet(viewsets.ModelViewSet):
-    queryset = Shop.objects.all()
-    serializer_class = ShopSerializer
-
-
 class IngredientViewSet(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
@@ -45,18 +42,32 @@ class FollowViewSet(viewsets.ModelViewSet):
 
 class FavoriteViewSet(viewsets.ModelViewSet):
     queryset = Favorite.objects.all()
-    serializer_class = FavoriteSerializer
+    serializer_class = FavoriteShopSerializer
+    permission_classes = (OnlyAuthorized,)
 
     def create(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
         recipe = Recipe.objects.get(id=id_recipe)
         user = request.user
         Favorite.objects.create(user=user, recipe=recipe)
-        serializer = FavoriteSerializer(recipe)
-        print(serializer.data)
+        serializer = FavoriteShopSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def perform_destroy(self, instance):
+    def destroy(self, instance):
         id_recipe = self.kwargs['id']
         recipe = Recipe.objects.get(id=id_recipe)
         Favorite.objects.get(recipe=recipe).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ShopViewSet(viewsets.ModelViewSet):
+    queryset = Shop.objects.all()
+    serializer_class = FavoriteShopSerializer
+
+    def create(self, request, *args, **kwargs):
+        id_recipe = kwargs.get('id')
+        recipe = Recipe.objects.get(id=id_recipe)
+        user = request.user
+        Shop.objects.create(user=user, item=recipe)
+        serializer = FavoriteShopSerializer(recipe)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
