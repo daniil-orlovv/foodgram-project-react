@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from recipes.models import (Recipe, Tag, Shop, Ingredient, Follow,
-                            RecipeIngredient, CustomUser, RecipeTag)
+from recipes.models import (Recipe, Tag, Shop, Ingredient, RecipeIngredient,
+                            CustomUser, RecipeTag)
 from djoser.serializers import UserCreateSerializer, UserSerializer
 
 
@@ -217,11 +217,8 @@ class FollowSerializer(serializers.ModelSerializer):
             'recipes_count')
 
     def to_representation(self, instance):
-
         recipes_count = Recipe.objects.filter(id=instance.id).count()
-        print(recipes_count)
 
-        # Если параметр recipes_count задан в запросе, добавьте его к данным
         data = {
             'email': instance.email,
             'id': instance.id,
