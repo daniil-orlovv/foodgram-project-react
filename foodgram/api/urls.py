@@ -1,7 +1,8 @@
 from django.urls import path, include
 from rest_framework.routers import SimpleRouter
 from .views import (RecipeViewSet, ShopViewSet, FavoriteViewSet,
-                    FollowViewSet, IngredientViewSet, TagViewSet)
+                    FollowViewSet, IngredientViewSet, TagViewSet,
+                    GetFollowsViewSet)
 
 router = SimpleRouter()
 
@@ -12,10 +13,12 @@ router.register(r'recipes/(?P<id>\d+)/shopping_cart', ShopViewSet,
                 basename='shop')
 router.register(r'recipes/(?P<id>\d+)/favorite', FavoriteViewSet,
                 basename='favorite')
-router.register('users/subscriptions', FollowViewSet, basename='subscribe')
+router.register(r'users/(?P<id>\d+)/subscribe', FollowViewSet,
+                basename='getfollows')
 router.register('ingredients', IngredientViewSet, basename='ingredients')
 
 urlpatterns = [
+    path('users/subscriptions', GetFollowsViewSet.as_view()),
     path('', include(router.urls)),
     path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
