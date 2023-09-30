@@ -1,12 +1,12 @@
-from rest_framework import viewsets, status, permissions, mixins
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from recipes.models import Recipe, Tag, Shop, Follow, Ingredient, Favorite
+from recipes.models import (Recipe, Tag, Shop, Follow, Ingredient, Favorite,
+                            CustomUser)
 from api.serializers import (RecipeCrUpSerializer,  RecipeReadSerializer,
-                             TagSerializer, ShopSerializer,
-                             FollowSerializer, IngredientSerializer,
-                             FavoriteShopSerializer)
+                             TagSerializer, FollowSerializer,
+                             IngredientSerializer, FavoriteShopSerializer)
 from api.permissions import OnlyAuthorized
 
 
@@ -36,8 +36,22 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 
 class FollowViewSet(viewsets.ModelViewSet):
-    queryset = Follow.objects.all()
     serializer_class = FollowSerializer
+
+    def get_queryset(self):
+        user_id = self.request.user.id
+        follows_user = Follow.objects.filter(
+            user=user_id).values_list('author_id', flat=True)
+        users = CustomUser.objects.filter(id__in=follows_user)
+        return users
+
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        author_id = kwargs.get('id')
+        author = CustomUser.objects.get(id=author_id)
+        Follow.objects.create(user=user, author=author)
+        serializer = FollowSerializer(author)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class FavoriteViewSet(viewsets.ModelViewSet):
