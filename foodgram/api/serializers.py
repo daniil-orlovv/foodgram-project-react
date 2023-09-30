@@ -202,6 +202,35 @@ class FavoriteShopSerializer(serializers.ModelSerializer):
 
 
 class FollowSerializer(serializers.ModelSerializer):
+    recipes = FavoriteShopSerializer(many=True, read_only=True)
+
     class Meta:
-        model = Follow
-        fields = ('useer', 'author')
+        model = CustomUser
+        fields = (
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'is_subscribed',
+            'recipes',
+            'recipes_count')
+
+    def to_representation(self, instance):
+
+        recipes_count = Recipe.objects.filter(id=instance.id).count()
+        print(recipes_count)
+
+        # Если параметр recipes_count задан в запросе, добавьте его к данным
+        data = {
+            'email': instance.email,
+            'id': instance.id,
+            'username': instance.username,
+            'first_name': instance.first_name,
+            'last_name': instance.last_name,
+            'is_subscribed': instance.is_subscribed,
+            'recipes': FavoriteShopSerializer(many=True, read_only=True).data,
+            'recipes_count': recipes_count,
+        }
+
+        return data
