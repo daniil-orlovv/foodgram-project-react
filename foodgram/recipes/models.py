@@ -117,7 +117,7 @@ class Shop(models.Model):
         null=False
     )
     item = models.ForeignKey(
-        Ingredient,
+        Recipe,
         on_delete=models.CASCADE,
         blank=False,
         null=False
