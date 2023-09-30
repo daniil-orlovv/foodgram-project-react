@@ -92,3 +92,10 @@ class ShopViewSet(viewsets.ModelViewSet):
         Shop.objects.create(user=user, item=recipe)
         serializer = FavoriteShopSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['delete'])
+    def delete(self, request, *args, **kwargs):
+        id_recipe = kwargs.get('id')
+        recipe = Recipe.objects.get(id=id_recipe)
+        Shop.objects.get(item=recipe).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
