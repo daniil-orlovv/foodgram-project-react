@@ -19,7 +19,8 @@ router.register('users/subscriptions', FollowViewSet,
 router.register('ingredients', IngredientViewSet, basename='ingredients')
 
 urlpatterns = [
-    # path('users/subscriptions', GetFollowsViewSet.as_view()),
+    path('recipes/download_shopping_cart/',
+         ShopViewSet.as_view({'get': 'download'})),
     path('', include(router.urls)),
     path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
