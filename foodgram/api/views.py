@@ -100,5 +100,22 @@ class ShopViewSet(viewsets.ModelViewSet):
         Shop.objects.get(item=recipe).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @action(detail=True)
     def download(self, request, *args, **kwargs):
-        ...
+        recipes_of_shop = Shop.objects.filter(user=request.user.id)
+        print(recipes_of_shop)
+
+        for shop in recipes_of_shop:
+            recipe = Recipe.objects.get(id=shop.item_id)
+            print(f'рецепт:{recipe}')
+            ingredients = recipe.recipes.all()
+            print(f'ингредиенты:{ingredients}')
+
+            for ingredient in ingredients:
+                ingredient = ingredient
+                print(ingredient)
+                ingredient_name = ingredient.ingredient.name
+                print(ingredient_name)
+                measurement_unit = ingredient.ingredient.measurement_unit
+                amount = ingredient.amount
+                print(ingredient_name, measurement_unit, amount)
