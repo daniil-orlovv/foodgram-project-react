@@ -9,6 +9,8 @@ from api.serializers import (RecipeCrUpSerializer,  RecipeReadSerializer,
                              IngredientSerializer, FavoriteShopSerializer)
 from api.permissions import OnlyAuthorized
 
+from reportlab.pdfgen.canvas import Canvas
+
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
@@ -103,19 +105,31 @@ class ShopViewSet(viewsets.ModelViewSet):
     @action(detail=True)
     def download(self, request, *args, **kwargs):
         recipes_of_shop = Shop.objects.filter(user=request.user.id)
-        print(recipes_of_shop)
+        all_ingredients = []
 
         for shop in recipes_of_shop:
             recipe = Recipe.objects.get(id=shop.item_id)
-            print(f'рецепт:{recipe}')
             ingredients = recipe.recipes.all()
-            print(f'ингредиенты:{ingredients}')
 
             for ingredient in ingredients:
                 ingredient = ingredient
-                print(ingredient)
                 ingredient_name = ingredient.ingredient.name
-                print(ingredient_name)
                 measurement_unit = ingredient.ingredient.measurement_unit
                 amount = ingredient.amount
                 print(ingredient_name, measurement_unit, amount)
+
+                ingredient_info = {
+                    "name": ingredient_name,
+                    "measurement_unit": measurement_unit,
+                    "amount": amount
+                }
+                all_ingredients.append(ingredient_info)
+        print(all_ingredients)
+
+        file_pdf = Canvas("shop_list.pdf")
+        y = 750
+        for i in all_ingredients:
+            ingredient_text = f"{i['name']} {i['measurement_unit']} {i['amount']}"
+            file_pdf.drawString(50, y, ingredient_text)
+            y -= 20
+        file_pdf.save()
