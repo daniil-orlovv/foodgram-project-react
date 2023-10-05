@@ -89,6 +89,11 @@ class FavoriteViewSet(viewsets.ModelViewSet):
     def delete(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
         recipe = Recipe.objects.get(id=id_recipe)
+        if not Favorite.objects.filter(recipe=recipe).exists():
+            return Response({
+                'error': 'Рецепт не добавлен в избранное!'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         Favorite.objects.get(recipe=recipe).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
