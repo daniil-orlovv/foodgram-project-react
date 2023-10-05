@@ -1,6 +1,14 @@
-from rest_framework import viewsets, status, permissions
+from django.db.models import Sum
+from django.http import FileResponse
+from django.shortcuts import get_object_or_404
+
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
+
+from reportlab.pdfgen.canvas import Canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 from recipes.models import (Recipe, Tag, Shop, Follow, Ingredient, Favorite,
                             CustomUser, RecipeIngredient)
@@ -8,14 +16,6 @@ from api.serializers import (RecipeCrUpSerializer,  RecipeReadSerializer,
                              TagSerializer, FollowSerializer,
                              IngredientSerializer, FavoriteShopSerializer)
 from api.permissions import UpdateIfAuthor, CreateIfAuth
-
-from reportlab.pdfgen.canvas import Canvas
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-
-from django.db.models import Sum
-from django.http import FileResponse
-from django.shortcuts import get_object_or_404
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -152,7 +152,7 @@ class ShopViewSet(viewsets.ModelViewSet):
         for i in ingredients:
             ingredient_info = {
                 "name": i['ingredient__name'],
-                "measurement_unit": i['ingredient__measurement_unit'],
+                "unit": i['ingredient__measurement_unit'],
                 "amount": int(i['amount'])
             }
             all_ingredients.append(ingredient_info)
@@ -162,11 +162,13 @@ class ShopViewSet(viewsets.ModelViewSet):
         file_pdf.setFont("Arial", 12)
         y = 750
         for i in all_ingredients:
-            ingredient_text = f"{i['name']} ({i['measurement_unit']}) — {i['amount']}"
+            ingredient_text = f"{i['name']} ({i['unit']}) — {i['amount']}"
             file_pdf.drawString(50, y, ingredient_text)
             y -= 20
         file_pdf.save()
         pdf_file_path = "shop_list.pdf"
-        response = FileResponse(open(pdf_file_path, 'rb'), content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="shop_list.pdf"'
+        response = FileResponse(
+            open(pdf_file_path, 'rb'), content_type='application/pdf')
+        response[
+            'Content-Disposition'] = 'attachment; filename="shop_list.pdf"'
         return response
