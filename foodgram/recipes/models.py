@@ -41,6 +41,9 @@ class Ingredient(models.Model):
     name = models.CharField(max_length=150, blank=True)
     measurement_unit = models.CharField(max_length=20, blank=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Recipe(models.Model):
     author = models.ForeignKey(
