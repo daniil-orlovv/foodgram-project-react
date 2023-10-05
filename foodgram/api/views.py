@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
@@ -7,7 +7,7 @@ from recipes.models import (Recipe, Tag, Shop, Follow, Ingredient, Favorite,
 from api.serializers import (RecipeCrUpSerializer,  RecipeReadSerializer,
                              TagSerializer, FollowSerializer,
                              IngredientSerializer, FavoriteShopSerializer)
-from api.permissions import OnlyAuthorized
+from api.permissions import UpdateIfAuthor, CreateIfAuth
 
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.pdfbase import pdfmetrics
@@ -19,6 +19,7 @@ from django.http import FileResponse
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
+    permission_classes = [CreateIfAuth, UpdateIfAuthor]
 
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:
@@ -70,7 +71,6 @@ class FollowViewSet(viewsets.ModelViewSet):
 class FavoriteViewSet(viewsets.ModelViewSet):
     queryset = Favorite.objects.all()
     serializer_class = FavoriteShopSerializer
-    permission_classes = (OnlyAuthorized,)
 
     def create(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
