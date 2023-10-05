@@ -14,6 +14,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
 from django.db.models import Sum
+from django.http import FileResponse
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -117,7 +118,6 @@ class ShopViewSet(viewsets.ModelViewSet):
             ).annotate(
                 amount=Sum('amount')
             )
-        print(ingredients)
         for i in ingredients:
             ingredient_info = {
                 "name": i['ingredient__name'],
@@ -125,7 +125,6 @@ class ShopViewSet(viewsets.ModelViewSet):
                 "amount": int(i['amount'])
             }
             all_ingredients.append(ingredient_info)
-        print(all_ingredients)
 
         pdfmetrics.registerFont(TTFont('Arial', 'Arial.ttf'))
         file_pdf = Canvas("shop_list.pdf")
@@ -136,3 +135,7 @@ class ShopViewSet(viewsets.ModelViewSet):
             file_pdf.drawString(50, y, ingredient_text)
             y -= 20
         file_pdf.save()
+        pdf_file_path = "shop_list.pdf"
+        response = FileResponse(open(pdf_file_path, 'rb'), content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="file_pdf.pdf"'
+        return response
