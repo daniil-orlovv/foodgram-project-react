@@ -1,3 +1,5 @@
+import re
+
 from rest_framework import serializers
 from recipes.models import (Recipe, Tag, Shop, Ingredient, RecipeIngredient,
                             CustomUser, RecipeTag)
@@ -15,6 +17,25 @@ class CustomUserCreateSerializer(UserCreateSerializer):
             'last_name',
             'password'
         )
+
+    def validate(self, data):
+        data = super().validate(data)
+        email = data.get('email')
+        username = data.get('username')
+        user_full = CustomUser.objects.filter(
+            email=email, username=username).exists()
+        user_email = CustomUser.objects.filter(email=email).exists()
+        user_username = CustomUser.objects.filter(username=username).exists()
+        if not user_full and user_email:
+            raise serializers.ValidationError('Эта почта занята!')
+        if not user_full and user_username:
+            raise serializers.ValidationError('Этот username занят!')
+        return data
+
+    def validate_username(self, value):
+        if not re.match(r'^[\w.@+-]+\z', value):
+            raise serializers.ValidationError(
+                'Используйте буквы, цифры и символы @/./+/-/_')
 
 
 class CustomUserSerializer(UserSerializer):
@@ -84,6 +105,12 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
             'text',
             'cooking_time'
         )
+
+    def validate_name(self, value):
+        if len(value) > 200:
+            raise serializers.ValidationError(
+                'Название не может быть больше 200 символов')
+        return value
 
     def create(self, validated_data):
 
