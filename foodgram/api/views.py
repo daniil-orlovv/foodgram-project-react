@@ -10,6 +10,8 @@ from api.serializers import (RecipeCrUpSerializer,  RecipeReadSerializer,
 from api.permissions import OnlyAuthorized
 
 from reportlab.pdfgen.canvas import Canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -121,15 +123,17 @@ class ShopViewSet(viewsets.ModelViewSet):
                 ingredient_info = {
                     "name": ingredient_name,
                     "measurement_unit": measurement_unit,
-                    "amount": amount
+                    "amount": int(amount)
                 }
                 all_ingredients.append(ingredient_info)
         print(all_ingredients)
 
+        pdfmetrics.registerFont(TTFont('Arial', 'Arial.ttf'))
         file_pdf = Canvas("shop_list.pdf")
+        file_pdf.setFont("Arial", 12)
         y = 750
         for i in all_ingredients:
-            ingredient_text = f"{i['name']} {i['measurement_unit']} {i['amount']}"
+            ingredient_text = f"{i['name']} ({i['measurement_unit']}) — {i['amount']}"
             file_pdf.drawString(50, y, ingredient_text)
             y -= 20
         file_pdf.save()
