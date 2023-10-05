@@ -76,6 +76,11 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         id_recipe = kwargs.get('id')
         recipe = Recipe.objects.get(id=id_recipe)
         user = request.user
+        if Favorite.objects.filter(recipe=recipe).exists():
+            return Response({
+                'error': 'Рецепт уже добавлен в избранное!'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         Favorite.objects.create(user=user, recipe=recipe)
         serializer = FavoriteShopSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -137,5 +142,5 @@ class ShopViewSet(viewsets.ModelViewSet):
         file_pdf.save()
         pdf_file_path = "shop_list.pdf"
         response = FileResponse(open(pdf_file_path, 'rb'), content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="file_pdf.pdf"'
+        response['Content-Disposition'] = 'attachment; filename="shop_list.pdf"'
         return response
