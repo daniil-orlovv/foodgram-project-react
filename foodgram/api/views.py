@@ -15,6 +15,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 
 from django.db.models import Sum
 from django.http import FileResponse
+from django.shortcuts import get_object_or_404
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -56,15 +57,25 @@ class FollowViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         user = request.user
         author_id = kwargs.get('id')
-        author = CustomUser.objects.get(id=author_id)
+        author = get_object_or_404(CustomUser, id=author_id)
+        if Follow.objects.filter(author=author_id).exists():
+            return Response({
+                'error': 'Вы уже подписаны на этого автора!'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         Follow.objects.create(user=user, author=author)
         serializer = FollowSerializer(author)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=['delete'])
     def delete(self, request, *args, **kwargs):
-        id_author = kwargs.get('id')
-        Follow.objects.get(author=id_author).delete()
+        author_id = kwargs.get('id')
+        if not Follow.objects.filter(author=author_id).exists():
+            return Response({
+                'error': 'Вы не подписаны на этого автора!'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        Follow.objects.get(author=author_id).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -106,6 +117,11 @@ class ShopViewSet(viewsets.ModelViewSet):
         id_recipe = kwargs.get('id')
         recipe = Recipe.objects.get(id=id_recipe)
         user = request.user
+        if Shop.objects.filter(item=recipe).exists():
+            return Response({
+                'error': 'Рецепт уже добавлен в список покупок!'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         Shop.objects.create(user=user, item=recipe)
         serializer = FavoriteShopSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -114,6 +130,11 @@ class ShopViewSet(viewsets.ModelViewSet):
     def delete(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
         recipe = Recipe.objects.get(id=id_recipe)
+        if not Shop.objects.filter(item=recipe).exists():
+            return Response({
+                'error': 'Рецепт не добавлен в список покупок!'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         Shop.objects.get(item=recipe).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
