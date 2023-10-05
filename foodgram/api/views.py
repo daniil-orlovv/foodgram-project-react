@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 
 from recipes.models import (Recipe, Tag, Shop, Follow, Ingredient, Favorite,
-                            CustomUser)
+                            CustomUser, RecipeIngredient)
 from api.serializers import (RecipeCrUpSerializer,  RecipeReadSerializer,
                              TagSerializer, FollowSerializer,
                              IngredientSerializer, FavoriteShopSerializer)
@@ -12,6 +12,8 @@ from api.permissions import OnlyAuthorized
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+
+from django.db.models import Sum
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -106,26 +108,23 @@ class ShopViewSet(viewsets.ModelViewSet):
 
     @action(detail=True)
     def download(self, request, *args, **kwargs):
-        recipes_of_shop = Shop.objects.filter(user=request.user.id)
         all_ingredients = []
-
-        for shop in recipes_of_shop:
-            recipe = Recipe.objects.get(id=shop.item_id)
-            ingredients = recipe.recipes.all()
-
-            for ingredient in ingredients:
-                ingredient = ingredient
-                ingredient_name = ingredient.ingredient.name
-                measurement_unit = ingredient.ingredient.measurement_unit
-                amount = ingredient.amount
-                print(ingredient_name, measurement_unit, amount)
-
-                ingredient_info = {
-                    "name": ingredient_name,
-                    "measurement_unit": measurement_unit,
-                    "amount": int(amount)
-                }
-                all_ingredients.append(ingredient_info)
+        ingredients = RecipeIngredient.objects.filter(
+            recipe__author__username=request.user.username,
+            recipe__is_in_shopping_cart=True
+        ).values(
+            'ingredient__name', 'ingredient__measurement_unit'
+            ).annotate(
+                amount=Sum('amount')
+            )
+        print(ingredients)
+        for i in ingredients:
+            ingredient_info = {
+                "name": i['ingredient__name'],
+                "measurement_unit": i['ingredient__measurement_unit'],
+                "amount": int(i['amount'])
+            }
+            all_ingredients.append(ingredient_info)
         print(all_ingredients)
 
         pdfmetrics.registerFont(TTFont('Arial', 'Arial.ttf'))
