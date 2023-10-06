@@ -36,7 +36,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
         return data
 
     def validate_username(self, value):
-        if not re.match(r'^[\w.@+-]+\z', value):
+        if not re.match(r'^[\w.@+-]+$', value):
             raise serializers.ValidationError(
                 'Используйте буквы, цифры и символы @/./+/-/_')
 
