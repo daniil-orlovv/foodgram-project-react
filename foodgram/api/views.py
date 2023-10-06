@@ -165,6 +165,7 @@ class ShopViewSet(viewsets.ModelViewSet):
             ingredient_text = f"{i['name']} ({i['unit']}) — {i['amount']}"
             file_pdf.drawString(50, y, ingredient_text)
             y -= 20
+        file_pdf.showPage()
         file_pdf.save()
         pdf_file_path = "shop_list.pdf"
         response = FileResponse(
