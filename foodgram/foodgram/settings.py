@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djoser',
     'django_extensions',
+    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -154,3 +155,5 @@ AUTH_USER_MODEL = 'recipes.CustomUser'
 
 STATIC_URL = '/backend_static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
