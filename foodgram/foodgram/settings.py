@@ -15,7 +15,8 @@ SECRET_KEY = 'yp86z$6vt4%d$ij!a0q06@dzpf_o7!tzi2ir8yb%+8)&4oy81y'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'backend']
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1']
+ALLOWED_HOSTS = ['http://127.0.0.1', 'backend', 'localhost']
 
 
 # Application definition
@@ -150,3 +151,6 @@ DJOSER = {
 }
 
 AUTH_USER_MODEL = 'recipes.CustomUser'
+
+STATIC_URL = '/backend_static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
