@@ -1,4 +1,6 @@
 from django.contrib import admin
+from import_export.admin import ImportExportModelAdmin
+
 from .models import (Recipe, RecipeIngredient, Tag, Ingredient, Favorite,
                      Follow, Shop)
 
@@ -27,6 +29,11 @@ class IngredientAdmin(admin.ModelAdmin):
     )
     search_fields = ('name',)
     list_filter = ('name',)
+
+
+@admin.register(Ingredient)
+class ImportExportIngredient(ImportExportModelAdmin):
+    pass
 
 
 class TagAdmin(admin.ModelAdmin):
@@ -61,4 +68,4 @@ admin.site.register(Tag, TagAdmin)
 admin.site.register(Favorite, FavoriteAdmin)
 admin.site.register(Follow)
 admin.site.register(Shop, ShopAdmin)
-admin.site.register(Ingredient, IngredientAdmin)
+# admin.site.register(Ingredient, IngredientAdmin)
