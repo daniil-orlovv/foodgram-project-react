@@ -156,4 +156,7 @@ AUTH_USER_MODEL = 'recipes.CustomUser'
 STATIC_URL = '/backend_static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = '/media/'
+
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
