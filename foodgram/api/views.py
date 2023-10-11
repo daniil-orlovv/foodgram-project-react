@@ -1,6 +1,9 @@
+from os import path
+
 from django.db.models import Sum
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
@@ -16,11 +19,14 @@ from api.serializers import (RecipeCrUpSerializer,  RecipeReadSerializer,
                              TagSerializer, FollowSerializer,
                              IngredientSerializer, FavoriteShopSerializer)
 from api.permissions import UpdateIfAuthor, CreateIfAuth
+from api.filters import TagFilter
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = [CreateIfAuth, UpdateIfAuthor]
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TagFilter
 
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:
@@ -159,7 +165,9 @@ class ShopViewSet(viewsets.ModelViewSet):
             }
             all_ingredients.append(ingredient_info)
 
-        pdfmetrics.registerFont(TTFont('Arial', 'Arial.ttf'))
+        app_path = path.realpath(path.dirname(__file__))
+        font = path.join(app_path, 'foodgram/api/fonts/Arial.ttf')
+        pdfmetrics.registerFont(TTFont('Arial', font))
         file_pdf = Canvas("shop_list.pdf")
         file_pdf.setFont("Arial", 12)
         y = 750
