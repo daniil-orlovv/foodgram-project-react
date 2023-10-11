@@ -185,7 +185,7 @@ class RecipeIngredientReadSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(
         source='ingredient.id',
     )
-    ingredient = serializers.CharField(
+    name = serializers.CharField(
         source='ingredient.name',
         required=False
     )
@@ -199,7 +199,7 @@ class RecipeIngredientReadSerializer(serializers.ModelSerializer):
         model = RecipeIngredient
         fields = (
             'id',
-            'ingredient',
+            'name',
             'amount',
             'measurement_unit'
         )
