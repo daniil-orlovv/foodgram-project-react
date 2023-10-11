@@ -128,6 +128,12 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
                 'Название не может быть больше 200 символов')
         return value
 
+    def valiate_cooking_time(self, value):
+        if value < 1:
+            raise serializers.ValidationError(
+                'Время приготовления не может быть меньше 1 минуты!')
+        return value
+
     def create(self, validated_data):
 
         ingredients = validated_data.pop('ingredients')
