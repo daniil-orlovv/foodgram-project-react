@@ -4,6 +4,7 @@ import base64
 from rest_framework import serializers
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from django.core.files.base import ContentFile
+from django.shortcuts import get_object_or_404
 
 from recipes.models import (Recipe, Tag, Shop, Ingredient, RecipeIngredient,
                             CustomUser, RecipeTag)
@@ -165,9 +166,10 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
                 ingredient=cur_ingr,
                 amount=cur_amount
             )
+        RecipeTag.objects.filter(recipe=object_id).delete()
+        recipe = get_object_or_404(Recipe, id=object_id)
         for tag_id in tags:
-            RecipeTag.objects.filter(recipe=object_id).update(
-                tag=tag_id)
+            RecipeTag.objects.create(recipe=recipe, tag=tag_id)
         instance.image = validated_data.get('image', instance.image)
         instance.name = validated_data.get('name', instance.name)
         instance.text = validated_data.get('text', instance.text)
