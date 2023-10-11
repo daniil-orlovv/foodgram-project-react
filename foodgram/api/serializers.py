@@ -212,6 +212,8 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(
         read_only=True
     )
+    image = serializers.ReadOnlyField(
+        source='image.url')
 
     class Meta:
         model = Recipe
