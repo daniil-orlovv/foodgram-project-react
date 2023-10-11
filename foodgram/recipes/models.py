@@ -25,7 +25,7 @@ class Tag(models.Model):
         blank=False,
         null=True,
         unique=True,
-        default='#FFFFFF'
+        default='#00BFFF'
     )
     slug = models.SlugField(
         max_length=200,
@@ -81,6 +81,12 @@ class RecipeTag(models.Model):
         on_delete=models.CASCADE
     )
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['recipe', 'tag'],
+                                    name='recipe_tag_unique')
+        ]
+
 
 class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
@@ -134,9 +140,8 @@ class Follow(models.Model):
                                on_delete=models.CASCADE,
                                related_name='following')
 
-
-class Meta:
-    constraints = [
-        models.UniqueConstraint(fields=['user', 'author'],
-                                name='user_author_unique')
-    ]
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'author'],
+                                    name='user_author_unique')
+        ]
