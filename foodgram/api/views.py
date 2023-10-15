@@ -55,7 +55,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 class FollowViewSet(viewsets.ModelViewSet):
     serializer_class = FollowSerializer
-    pagination_class = None
+    pagination_class = FollowPagination
 
     def get_queryset(self):
         user = self.request.user.id
