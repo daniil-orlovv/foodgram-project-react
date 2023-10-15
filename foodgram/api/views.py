@@ -40,6 +40,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TagFilter
 
+    def get_queryset(self):
+        return Recipe.objects.all().order_by('-created')
+
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:
             return RecipeReadSerializer
