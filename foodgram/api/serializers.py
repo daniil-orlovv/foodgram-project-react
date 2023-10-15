@@ -258,6 +258,8 @@ class FavoriteShopSerializer(serializers.ModelSerializer):
 
 class FollowSerializer(serializers.ModelSerializer):
     recipes = serializers.SerializerMethodField(method_name='get_recipes')
+    recipes_count = serializers.SerializerMethodField(
+        method_name='get_recipes_count')
 
     class Meta:
         model = CustomUser
@@ -268,8 +270,14 @@ class FollowSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'is_subscribed',
-            'recipes')
+            'recipes',
+            'recipes_count')
 
     def get_recipes(self, obj):
-        recipes = Recipe.objects.filter(author=obj)
+        request = self.context.get('request')
+        limit = int(request.GET.get('recipes_limit'))
+        recipes = Recipe.objects.filter(author=obj)[:limit]
         return FavoriteShopSerializer(recipes, many=True, read_only=True).data
+
+    def get_recipes_count(self, obj):
+        return Recipe.objects.filter(author=obj).count()
