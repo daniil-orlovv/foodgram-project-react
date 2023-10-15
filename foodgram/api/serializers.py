@@ -8,10 +8,13 @@ from django.core.files.base import ContentFile
 from django.shortcuts import get_object_or_404
 
 from recipes.models import (Recipe, Tag, Shop, Ingredient, RecipeIngredient,
-                            CustomUser, RecipeTag)
+                            CustomUser, RecipeTag, Follow)
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
+    is_subscribed = serializers.SerializerMethodField(
+        method_name='get_is_subscribed')
+
     class Meta(UserCreateSerializer.Meta):
         model = CustomUser
         fields = (
@@ -20,7 +23,8 @@ class CustomUserCreateSerializer(UserCreateSerializer):
             'username',
             'first_name',
             'last_name',
-            'password'
+            'password',
+            'is_subscribed'
         )
 
     def validate(self, data):
@@ -43,8 +47,20 @@ class CustomUserCreateSerializer(UserCreateSerializer):
                 'Используйте буквы, цифры и символы @/./+/-/_')
         return value
 
+    def get_is_subscribed(self, obj):
+        request = self.context.get('request')
+        if Follow.objects.filter(
+            user=request.user,
+            author=obj
+        ).exists():
+            return True
+        return False
+
 
 class CustomUserSerializer(UserSerializer):
+    is_subscribed = serializers.SerializerMethodField(
+        method_name='get_is_subscribed')
+
     class Meta(UserSerializer.Meta):
         model = CustomUser
         fields = (
@@ -55,6 +71,15 @@ class CustomUserSerializer(UserSerializer):
             'last_name',
             'is_subscribed'
         )
+
+    def get_is_subscribed(self, obj):
+        request = self.context.get('request')
+        if Follow.objects.filter(
+            user=request.user,
+            author=obj
+        ).exists():
+            return True
+        return False
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -260,6 +285,8 @@ class FollowSerializer(serializers.ModelSerializer):
     recipes = serializers.SerializerMethodField(method_name='get_recipes')
     recipes_count = serializers.SerializerMethodField(
         method_name='get_recipes_count')
+    is_subscribed = serializers.SerializerMethodField(
+        method_name='get_is_subscribed')
 
     class Meta:
         model = CustomUser
@@ -275,10 +302,20 @@ class FollowSerializer(serializers.ModelSerializer):
 
     def get_recipes(self, obj):
         request = self.context.get('request')
-        limit = int(request.GET.get('recipes_limit'))
+        limit = request.GET.get('recipes_limit')
         recipes = Recipe.objects.filter(author=obj).order_by(
-            '-created')[:limit]
+            '-created')[:int(limit)]
         return FavoriteShopSerializer(recipes, many=True, read_only=True).data
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj).count()
+
+    def get_is_subscribed(self, obj):
+        request = self.context.get('request')
+        print(request)
+        if Follow.objects.filter(
+            user=request.user.id,
+            author=obj.id
+        ).exists():
+            return True
+        return False
