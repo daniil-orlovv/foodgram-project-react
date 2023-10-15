@@ -65,6 +65,7 @@ class Recipe(models.Model):
     )
     is_favorited = models.BooleanField(default=False)
     is_in_shopping_cart = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
