@@ -9,6 +9,7 @@ router = SimpleRouter()
 
 router.register('tags', TagViewSet, basename='tags')
 router.register('recipes', RecipeViewSet, basename='recipes')
+router.register('cart', ShopViewSet, basename='get_shop_list')
 router.register(r'recipes/(?P<id>\d+)/shopping_cart', ShopViewSet,
                 basename='shop')
 router.register(r'recipes/(?P<id>\d+)/favorite', FavoriteViewSet,

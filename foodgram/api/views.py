@@ -20,6 +20,7 @@ from api.serializers import (RecipeCrUpSerializer,  RecipeReadSerializer,
                              IngredientSerializer, FavoriteShopSerializer)
 from api.permissions import UpdateIfAuthor, CreateIfAuth
 from api.filters import TagFilter
+from api.pagination import FollowPagination
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -54,13 +55,12 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 class FollowViewSet(viewsets.ModelViewSet):
     serializer_class = FollowSerializer
+    pagination_class = None
 
     def get_queryset(self):
-        user_id = self.request.user.id
-        follows_user = Follow.objects.filter(
-            user=user_id).values_list('author_id', flat=True)
-        users = CustomUser.objects.filter(id__in=follows_user)
-        return users
+        user = self.request.user.id
+        queryset = CustomUser.objects.filter(following__user=user)
+        return queryset
 
     def create(self, request, *args, **kwargs):
         user = request.user
