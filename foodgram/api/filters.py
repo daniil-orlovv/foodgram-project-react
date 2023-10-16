@@ -9,14 +9,17 @@ class RecipeFilter(django_filters.FilterSet):
         to_field_name='slug',
         queryset=Tag.objects.all(),
     )
+    is_favorited = django_filters.NumberFilter(
+        method='filter_is_favorited'
+    )
 
     class Meta:
         model = Recipe
-        fields = ['tags']
+        fields = ['tags',]
 
-
-class ShopFilter(django_filters.FilterSet):
-
-    class Meta:
-        model = Recipe
-        fields = ['is_in_shopping_cart']
+    def filter_is_favorited(self, queryset, name, value):
+        user = self.request.user
+        if value and user.is_authenticated:
+            return queryset.filter(favorite_recipe__user=user)
+        else:
+            return queryset
