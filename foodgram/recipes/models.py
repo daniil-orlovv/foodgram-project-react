@@ -107,13 +107,14 @@ class Favorite(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE,
         blank=False,
-        null=False
+        null=False,
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
         blank=False,
-        null=False
+        null=False,
+        related_name='favorite_recipe'
     )
 
 
@@ -128,7 +129,8 @@ class Shop(models.Model):
         Recipe,
         on_delete=models.CASCADE,
         blank=False,
-        null=False
+        null=False,
+        related_name='shop_item'
     )
 
 
