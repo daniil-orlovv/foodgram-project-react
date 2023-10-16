@@ -8,7 +8,7 @@ from django.core.files.base import ContentFile
 from django.shortcuts import get_object_or_404
 
 from recipes.models import (Recipe, Tag, Shop, Ingredient, RecipeIngredient,
-                            CustomUser, RecipeTag, Follow)
+                            CustomUser, RecipeTag, Follow, Favorite)
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
@@ -133,6 +133,10 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
         many=True
     )
     image = Base64ImageField(required=False, allow_null=True)
+    is_favorited = serializers.SerializerMethodField(
+        method_name='get_is_favorited')
+    is_in_shopping_cart = serializers.SerializerMethodField(
+        method_name='get_is_in_shopping_cart')
 
     class Meta:
         model = Recipe
@@ -148,6 +152,24 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
             'text',
             'cooking_time'
         )
+
+    def get_is_favorited(self, obj):
+        request = self.context.get('request')
+        if Favorite.objects.filter(
+            user=request.user.id,
+            recipe=obj.id
+        ).exists():
+            return True
+        return False
+
+    def get_is_in_shopping_cart(self, obj):
+        request = self.context.get('request')
+        if Shop.objects.filter(
+            user=request.user.id,
+            item=obj.id
+        ).exists():
+            return True
+        return False
 
     def validate_name(self, value):
         if len(value) > 200:
@@ -248,6 +270,10 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     )
     image = serializers.ReadOnlyField(
         source='image.url')
+    is_favorited = serializers.SerializerMethodField(
+        method_name='get_is_favorited')
+    is_in_shopping_cart = serializers.SerializerMethodField(
+        method_name='get_is_in_shopping_cart')
 
     class Meta:
         model = Recipe
@@ -263,6 +289,24 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             'text',
             'cooking_time'
         )
+
+    def get_is_favorited(self, obj):
+        request = self.context.get('request')
+        if Favorite.objects.filter(
+            user=request.user.id,
+            recipe=obj.id
+        ).exists():
+            return True
+        return False
+
+    def get_is_in_shopping_cart(self, obj):
+        request = self.context.get('request')
+        if Shop.objects.filter(
+            user=request.user.id,
+            item=obj.id
+        ).exists():
+            return True
+        return False
 
 
 class ShopSerializer(serializers.ModelSerializer):
