@@ -112,7 +112,7 @@ class Favorite(models.Model):
         on_delete=models.CASCADE,
         blank=False,
         null=False,
-        related_name='favorite.'
+        related_name='favorite_recipe'
     )
 
 
