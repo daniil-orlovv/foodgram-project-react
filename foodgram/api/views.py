@@ -67,18 +67,19 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 
 class FollowViewSet(viewsets.ModelViewSet):
+    queryset = Follow.objects.all()
     serializer_class = FollowSerializer
     pagination_class = FollowPagination
-
-    def get_queryset(self):
-        user = self.request.user.id
-        queryset = CustomUser.objects.filter(following__user=user)
-        return queryset
 
     def create(self, request, *args, **kwargs):
         user = request.user
         author_id = kwargs.get('id')
         author = get_object_or_404(CustomUser, id=author_id)
+        if user.id == author_id:
+            return Response({
+                'error': 'Нельзя подписаться на самого себя!'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         if Follow.objects.filter(author=author_id).exists():
             return Response({
                 'error': 'Вы уже подписаны на этого автора!'},
@@ -101,12 +102,8 @@ class FollowViewSet(viewsets.ModelViewSet):
 
 
 class FavoriteViewSet(viewsets.ModelViewSet):
+    queryset = Favorite.objects.all()
     serializer_class = FavoriteShopSerializer
-
-    def get_queryset(self):
-        user = self.request.user.id
-        queryset = Recipe.objects.filter(favorite_recipe__user=user)
-        return queryset
 
     def create(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
