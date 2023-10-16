@@ -20,7 +20,7 @@ from api.serializers import (RecipeCrUpSerializer,  RecipeReadSerializer,
                              IngredientSerializer, FavoriteShopSerializer,
                              CustomUserSerializer)
 from api.permissions import UpdateIfAuthor, CreateIfAuth
-from api.filters import RecipeFilter, ShopFilter, FavoriteFilter
+from api.filters import RecipeFilter
 from api.pagination import FollowPagination
 
 
@@ -102,7 +102,6 @@ class FollowViewSet(viewsets.ModelViewSet):
 
 class FavoriteViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteShopSerializer
-    filterset_class = FavoriteFilter
 
     def get_queryset(self):
         user = self.request.user.id
@@ -137,7 +136,6 @@ class FavoriteViewSet(viewsets.ModelViewSet):
 
 class ShopViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteShopSerializer
-    filterset_class = ShopFilter
 
     def get_queryset(self):
         user = self.request.user.id
