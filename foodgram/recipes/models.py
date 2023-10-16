@@ -62,8 +62,6 @@ class Recipe(models.Model):
         Ingredient,
         through='RecipeIngredient'
     )
-    is_favorited = models.BooleanField(default=False)
-    is_in_shopping_cart = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -114,7 +112,7 @@ class Favorite(models.Model):
         on_delete=models.CASCADE,
         blank=False,
         null=False,
-        related_name='favorite_recipe'
+        related_name='favorite.'
     )
 
 
