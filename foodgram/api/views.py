@@ -20,7 +20,7 @@ from api.serializers import (RecipeCrUpSerializer,  RecipeReadSerializer,
                              IngredientSerializer, FavoriteShopSerializer,
                              CustomUserSerializer)
 from api.permissions import UpdateIfAuthor, CreateIfAuth
-from api.filters import TagFilter
+from api.filters import RecipeFilter, ShopFilter, FavoriteFilter
 from api.pagination import FollowPagination
 
 
@@ -35,10 +35,9 @@ class CustomUserViewSet(viewsets.ModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all()
     permission_classes = [CreateIfAuth, UpdateIfAuthor]
     filter_backends = (DjangoFilterBackend,)
-    filterset_class = TagFilter
+    filterset_class = RecipeFilter
 
     def get_queryset(self):
         return Recipe.objects.all().order_by('-created')
@@ -102,8 +101,13 @@ class FollowViewSet(viewsets.ModelViewSet):
 
 
 class FavoriteViewSet(viewsets.ModelViewSet):
-    queryset = Favorite.objects.all()
     serializer_class = FavoriteShopSerializer
+    filterset_class = FavoriteFilter
+
+    def get_queryset(self):
+        user = self.request.user.id
+        queryset = Recipe.objects.filter(favorite_recipe__user=user)
+        return queryset
 
     def create(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
@@ -132,8 +136,13 @@ class FavoriteViewSet(viewsets.ModelViewSet):
 
 
 class ShopViewSet(viewsets.ModelViewSet):
-    queryset = Shop.objects.all()
     serializer_class = FavoriteShopSerializer
+    filterset_class = ShopFilter
+
+    def get_queryset(self):
+        user = self.request.user.id
+        queryset = Recipe.objects.filter(shop_item__user=user)
+        return queryset
 
     def create(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
