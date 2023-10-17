@@ -25,13 +25,16 @@ from api.pagination import FollowPagination
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
+    queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     pagination_class = None
 
-    def get_queryset(self):
-        user_id = self.request.user.id
-        queryset = CustomUser.objects.filter(id=user_id)
-        return queryset
+    @action(detail=True)
+    def me(self, request, *args, **kwargs):
+        user_id = request.user.id
+        user = get_object_or_404(CustomUser, id=user_id)
+        serializer = CustomUserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
