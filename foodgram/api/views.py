@@ -5,7 +5,7 @@ from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 
-from rest_framework import viewsets, status, permissions
+from rest_framework import viewsets, status, permissions, filters
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
@@ -20,7 +20,7 @@ from api.serializers import (RecipeCrUpSerializer,  RecipeReadSerializer,
                              IngredientSerializer, FavoriteShopSerializer,
                              CustomUserSerializer)
 from api.permissions import UpdateIfAuthor, CreateIfAuth
-from api.filters import RecipeFilter
+from api.filters import RecipeFilter, IngredientFilter
 from api.pagination import FollowPagination
 
 
@@ -67,6 +67,8 @@ class IngredientViewSet(viewsets.ModelViewSet):
     serializer_class = IngredientSerializer
     permission_classes = [permissions.AllowAny,]
     pagination_class = None
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filterset_class = IngredientFilter
 
 
 class FollowViewSet(viewsets.ModelViewSet):
