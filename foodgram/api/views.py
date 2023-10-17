@@ -75,12 +75,12 @@ class FollowViewSet(viewsets.ModelViewSet):
         user = request.user
         author_id = kwargs.get('id')
         author = get_object_or_404(CustomUser, id=author_id)
-        if user.id == author_id:
+        if user == author:
             return Response({
                 'error': 'Нельзя подписаться на самого себя!'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        if Follow.objects.filter(author=author_id).exists():
+        if Follow.objects.filter(user=user.id, author=author_id).exists():
             return Response({
                 'error': 'Вы уже подписаны на этого автора!'},
                 status=status.HTTP_400_BAD_REQUEST
@@ -109,7 +109,7 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         id_recipe = kwargs.get('id')
         recipe = Recipe.objects.get(id=id_recipe)
         user = request.user
-        if Favorite.objects.filter(recipe=recipe).exists():
+        if Favorite.objects.filter(user=user.id, recipe=recipe).exists():
             return Response({
                 'error': 'Рецепт уже добавлен в избранное!'},
                 status=status.HTTP_400_BAD_REQUEST
@@ -143,7 +143,7 @@ class ShopViewSet(viewsets.ModelViewSet):
         id_recipe = kwargs.get('id')
         recipe = Recipe.objects.get(id=id_recipe)
         user = request.user
-        if Shop.objects.filter(item=recipe).exists():
+        if Shop.objects.filter(user=user.id, item=recipe).exists():
             return Response({
                 'error': 'Рецепт уже добавлен в список покупок!'},
                 status=status.HTTP_400_BAD_REQUEST
