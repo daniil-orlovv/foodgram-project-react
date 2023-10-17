@@ -57,7 +57,7 @@ class Recipe(models.Model):
         Tag,
         through='RecipeTag'
     )
-    cooking_time = models.CharField(blank=False, null=False)
+    cooking_time = models.CharField(max_length=5, blank=False, null=False)
     ingredients = models.ManyToManyField(
         Ingredient,
         through='RecipeIngredient'
