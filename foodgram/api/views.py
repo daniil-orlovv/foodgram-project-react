@@ -67,9 +67,12 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 
 class FollowViewSet(viewsets.ModelViewSet):
-    queryset = Follow.objects.all()
     serializer_class = FollowSerializer
     pagination_class = FollowPagination
+
+    def get_queryset(self):
+        user = self.request.user
+        return CustomUser.objects.filter(following__user=user.id)
 
     def create(self, request, *args, **kwargs):
         user = request.user
