@@ -181,8 +181,7 @@ class ShopViewSet(viewsets.ModelViewSet):
     def download(self, request, *args, **kwargs):
         all_ingredients = []
         ingredients = RecipeIngredient.objects.filter(
-            recipe__author__username=request.user.username,
-            recipe__is_in_shopping_cart=True
+            recipe__author__username=request.user.username
         ).values(
             'ingredient__name', 'ingredient__measurement_unit'
             ).annotate(
@@ -196,8 +195,7 @@ class ShopViewSet(viewsets.ModelViewSet):
             }
             all_ingredients.append(ingredient_info)
 
-        app_path = path.realpath(path.dirname(__file__))
-        font = path.join(app_path, 'foodgram/api/fonts/Arial.ttf')
+        font = "/app/api/fonts/Arial.ttf"
         pdfmetrics.registerFont(TTFont('Arial', font))
         file_pdf = Canvas("shop_list.pdf")
         file_pdf.setFont("Arial", 12)
