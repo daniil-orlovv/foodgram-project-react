@@ -4,13 +4,13 @@
     // Для получения дополнительной информации посетите: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-    
+
 
         {
             "name": "Python: Django",
             "type": "python",
             "request": "launch",
-            "program": "/c/Users/Даниил/Desktop/Диплом/foodgram-project-react/foodgram/manage.py",
+            "program": "/c/Users/Даниил/Desktop/Диплом/foodgram-project-react/backend/manage.py",
             "args": [
                 "runserver"
             ],
