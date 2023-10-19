@@ -33,7 +33,7 @@ services:
       - db:/var/lib/postgresql/data
   backend:
     # Из какого Dockerfile собирать образ для этого контейнера:
-    build: ../foodgram/
+    build: ../backend/
     env_file: .env
     volumes:
       - static:/backend_static/
