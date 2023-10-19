@@ -67,6 +67,11 @@ class Recipe(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def added_to_fav(self):
+        result = Favorite.objects.filter(recipe=self.id)
+        return result.count()
+
 
 class RecipeTag(models.Model):
     recipe = models.ForeignKey(
