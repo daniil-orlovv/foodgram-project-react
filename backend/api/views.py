@@ -11,7 +11,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 
 from recipes.models import (Recipe, Tag, Shop, Follow, Ingredient, Favorite,
                             CustomUser, RecipeIngredient)
-from api.serializers import (RecipeCrUpSerializer,  RecipeReadSerializer,
+from api.serializers import (RecipeCrUpSerializer, RecipeReadSerializer,
                              TagSerializer, FollowSerializer,
                              IngredientSerializer, FavoriteShopSerializer,
                              CustomUserSerializer)
@@ -179,10 +179,8 @@ class ShopViewSet(viewsets.ModelViewSet):
         ingredients = RecipeIngredient.objects.filter(
             recipe__author__username=request.user.username
         ).values(
-            'ingredient__name', 'ingredient__measurement_unit'
-            ).annotate(
-                amount=Sum('amount')
-            )
+            'ingredient__name', 'ingredient__measurement_unit').annotate(
+                amount=Sum('amount'))
         for i in ingredients:
             ingredient_info = {
                 "name": i['ingredient__name'],
