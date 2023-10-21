@@ -59,7 +59,7 @@ jobs:
         with:
           context: ./frontend/
           push: true
-          tags: daniilolrovv/foodgram_frontend:latest
+          tags: daniilorlovv/foodgram_frontend:latest
   deploy:
     runs-on: ubuntu-latest
     needs:
