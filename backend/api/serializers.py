@@ -1,13 +1,12 @@
 import base64
 import re
 
-from djoser.serializers import UserCreateSerializer, UserSerializer
 from django.core.files.base import ContentFile
 from django.shortcuts import get_object_or_404
+from djoser.serializers import UserCreateSerializer, UserSerializer
+from recipes.models import (CustomUser, Favorite, Follow, Ingredient, Recipe,
+                            RecipeIngredient, RecipeTag, Shop, Tag)
 from rest_framework import serializers
-
-from recipes.models import (Recipe, Tag, Shop, Ingredient, RecipeIngredient,
-                            CustomUser, RecipeTag, Follow, Favorite)
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):

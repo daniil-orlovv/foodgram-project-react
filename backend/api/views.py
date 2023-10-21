@@ -1,23 +1,22 @@
+from api.filters import IngredientFilter, RecipeFilter
+from api.pagination import FollowPagination
+from api.permissions import CreateIfAuth, UpdateIfAuthor
+from api.serializers import (CustomUserSerializer, FavoriteShopSerializer,
+                             FollowSerializer, IngredientSerializer,
+                             RecipeCrUpSerializer, RecipeReadSerializer,
+                             TagSerializer)
 from django.db.models import Sum
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, status, permissions, filters
-from rest_framework.response import Response
-from rest_framework.decorators import action
-from reportlab.pdfgen.canvas import Canvas
+from recipes.models import (CustomUser, Favorite, Follow, Ingredient, Recipe,
+                            RecipeIngredient, Shop, Tag)
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-
-from recipes.models import (Recipe, Tag, Shop, Follow, Ingredient, Favorite,
-                            CustomUser, RecipeIngredient)
-from api.serializers import (RecipeCrUpSerializer, RecipeReadSerializer,
-                             TagSerializer, FollowSerializer,
-                             IngredientSerializer, FavoriteShopSerializer,
-                             CustomUserSerializer)
-from api.permissions import UpdateIfAuthor, CreateIfAuth
-from api.filters import RecipeFilter, IngredientFilter
-from api.pagination import FollowPagination
+from reportlab.pdfgen.canvas import Canvas
+from rest_framework import filters, permissions, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
