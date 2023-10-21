@@ -16,7 +16,7 @@ services:
   nginx:
     image: nginx:1.19.3
     ports:
-      - "80:80"
+      - "8000:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ../frontend/build:/usr/share/nginx/html/
@@ -24,20 +24,15 @@ services:
       - static:/staticfiles/
       - media:/media/
   db:
-    # Из какого образа запустить контейнер:
     image: postgres:13.10
-    # Файл (или список файлов) с переменными окружения
     env_file: .env
-    # Какой volume подключить для этого контейнера
     volumes:
       - db:/var/lib/postgresql/data
   backend:
-    # Из какого Dockerfile собирать образ для этого контейнера:
     build: ../backend/
     env_file: .env
     volumes:
       - static:/backend_static/
       - media:/media/
-    # Какие контейнеры нужно запустить до старта этого контейнера:
     depends_on:
       - db
