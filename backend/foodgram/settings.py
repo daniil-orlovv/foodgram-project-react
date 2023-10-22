@@ -14,7 +14,7 @@ SECRET_KEY = 'yp86z$6vt4%d$ij!a0q06@dzpf_o7!tzi2ir8yb%+8)&4oy81y'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-CSRF_TRUSTED_ORIGINS = ['https://127.0.0.1', 'http://158.160.65.28']
+CSRF_TRUSTED_ORIGINS = ['https://foodgrrram.ddns.net', 'http://158.160.65.28']
 ALLOWED_HOSTS = [
     '158.160.65.28',
     '127.0.0.1',
