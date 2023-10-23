@@ -9,8 +9,8 @@ from rest_framework import serializers
 from recipes.models import (CustomUser, Favorite, Follow, Ingredient, Recipe,
                             RecipeIngredient, RecipeTag, Shop, Tag)
 
-MAX_AMOUNT = 32000
-MIN_AMOUNT = 1
+MAX_VALUE = 32000
+MIN_VALUE = 1
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
@@ -100,8 +100,8 @@ class IngredientM2MSerializer(serializers.ModelSerializer):
         required=True
     )
     amount = serializers.IntegerField(
-        max_value=MAX_AMOUNT,
-        min_value=MIN_AMOUNT
+        max_value=MAX_VALUE,
+        min_value=MIN_VALUE
     )
 
     class Meta:
@@ -135,6 +135,10 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
         method_name='get_is_favorited')
     is_in_shopping_cart = serializers.SerializerMethodField(
         method_name='get_is_in_shopping_cart')
+    cooking_time = serializers.IntegerField(
+        max_value=MAX_VALUE,
+        min_value=MIN_VALUE
+    )
 
     class Meta:
         model = Recipe
