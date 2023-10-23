@@ -6,11 +6,12 @@ from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
-from recipes.models import (Cart, CustomUser, Favorite, Follow, Ingredient, Recipe,
-                            RecipeIngredient, RecipeTag, Tag)
+from recipes.models import (Cart, CustomUser, Favorite, Follow, Ingredient,
+                            Recipe, RecipeIngredient, RecipeTag, Tag)
 
 MAX_VALUE = 32000
 MIN_VALUE = 1
+MAX_LEN_NAME = 200
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
@@ -139,6 +140,7 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
         max_value=MAX_VALUE,
         min_value=MIN_VALUE
     )
+    name = serializers.CharField(max_value=MAX_LEN_NAME)
 
     class Meta:
         model = Recipe
@@ -164,18 +166,6 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         user = request.user
         return user.user_cart.filter(item=obj).exists()
-
-    def validate_name(self, value):
-        if len(value) > 200:
-            raise serializers.ValidationError(
-                'Название не может быть больше 200 символов')
-        return value
-
-    def valiate_cooking_time(self, value):
-        if value < 1:
-            raise serializers.ValidationError(
-                'Время приготовления не может быть меньше 1 минуты!')
-        return value
 
     def create(self, validated_data):
 
