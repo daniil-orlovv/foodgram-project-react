@@ -2,13 +2,12 @@ import base64
 import re
 
 from django.core.files.base import ContentFile
-from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
 from api.utils import bulk_create_recipe_ingredients, bulk_create_recipe_tags
-from recipes.models import (Cart, CustomUser, Favorite, Follow, Ingredient,
-                            Recipe, RecipeIngredient, RecipeTag, Tag)
+from recipes.models import (Cart, CustomUser, Follow, Ingredient, Recipe,
+                            RecipeIngredient, RecipeTag, Tag)
 
 MAX_VALUE = 32000
 MIN_VALUE = 1
@@ -281,7 +280,7 @@ class ShopSerializer(serializers.ModelSerializer):
         fields = ('user', 'item')
 
 
-class FavoriteShopSerializer(serializers.ModelSerializer):
+class FavoriteCartSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=False)
     image = serializers.ImageField(required=False)
     cooking_time = serializers.ReadOnlyField()
@@ -318,7 +317,7 @@ class FollowSerializer(serializers.ModelSerializer):
                 '-created')[:int(limit)]
         else:
             recipes = Recipe.objects.filter(author=obj)
-        return FavoriteShopSerializer(recipes, many=True, read_only=True).data
+        return FavoriteCartSerializer(recipes, many=True, read_only=True).data
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj).count()
