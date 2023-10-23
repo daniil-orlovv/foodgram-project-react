@@ -9,6 +9,9 @@ from rest_framework import serializers
 from recipes.models import (CustomUser, Favorite, Follow, Ingredient, Recipe,
                             RecipeIngredient, RecipeTag, Shop, Tag)
 
+MAX_AMOUNT = 32000
+MIN_AMOUNT = 1
+
 
 class CustomUserCreateSerializer(UserCreateSerializer):
     is_subscribed = serializers.SerializerMethodField(
@@ -48,12 +51,8 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
-        if Follow.objects.filter(
-            user=request.user,
-            author=obj
-        ).exists():
-            return True
-        return False
+        user = request.user
+        return user.user_following.filter(author=obj).exists()
 
 
 class CustomUserSerializer(UserSerializer):
@@ -73,12 +72,8 @@ class CustomUserSerializer(UserSerializer):
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
-        if request and request.user.is_authenticated:
-            return Follow.objects.filter(
-                user=request.user.id,
-                author=obj.id
-            ).exists()
-        return False
+        user = request.user
+        return user.user_following.filter(author=obj).exists()
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -103,6 +98,10 @@ class IngredientM2MSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all(),
         required=True
+    )
+    amount = serializers.IntegerField(
+        max_value=MAX_AMOUNT,
+        min_value=MIN_AMOUNT
     )
 
     class Meta:
