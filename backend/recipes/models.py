@@ -48,7 +48,8 @@ class Recipe(models.Model):
         CustomUser,
         on_delete=models.CASCADE,
         blank=True,
-        null=True
+        null=True,
+        related_name='author_recipes'
     )
     name = models.CharField(max_length=200, blank=False, null=False)
     image = models.ImageField(blank=False, null=False)
