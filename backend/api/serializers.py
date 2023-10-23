@@ -157,12 +157,8 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, obj):
         request = self.context.get('request')
-        if Favorite.objects.filter(
-            user=request.user.id,
-            recipe=obj.id
-        ).exists():
-            return True
-        return False
+        user = request.user
+        return user.user_favorite.filter(recipe=obj).exists()
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
