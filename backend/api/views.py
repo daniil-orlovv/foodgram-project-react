@@ -16,8 +16,8 @@ from api.serializers import (CustomUserSerializer, FavoriteShopSerializer,
                              FollowSerializer, IngredientSerializer,
                              RecipeCrUpSerializer, RecipeReadSerializer,
                              TagSerializer)
-from recipes.models import (CustomUser, Favorite, Follow, Ingredient, Recipe,
-                            RecipeIngredient, Shop, Tag)
+from recipes.models import (Cart, CustomUser, Favorite, Follow, Ingredient, Recipe,
+                            RecipeIngredient, Tag)
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
@@ -152,12 +152,12 @@ class ShopViewSet(viewsets.ModelViewSet):
         id_recipe = kwargs.get('id')
         recipe = Recipe.objects.get(id=id_recipe)
         user = request.user
-        if Shop.objects.filter(user=user.id, item=recipe).exists():
+        if Cart.objects.filter(user=user.id, item=recipe).exists():
             return Response({
                 'error': 'Рецепт уже добавлен в список покупок!'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        Shop.objects.create(user=user, item=recipe)
+        Cart.objects.create(user=user, item=recipe)
         serializer = FavoriteShopSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -165,12 +165,12 @@ class ShopViewSet(viewsets.ModelViewSet):
     def delete(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
         recipe = Recipe.objects.get(id=id_recipe)
-        if not Shop.objects.filter(item=recipe).exists():
+        if not Cart.objects.filter(item=recipe).exists():
             return Response({
                 'error': 'Рецепт не добавлен в список покупок!'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        Shop.objects.get(item=recipe).delete()
+        Cart.objects.get(item=recipe).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True)
