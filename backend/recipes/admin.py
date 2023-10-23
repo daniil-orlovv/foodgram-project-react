@@ -1,8 +1,8 @@
 from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
 
-from .models import (Cart, CustomUser, Favorite, Follow, Ingredient,
-                     Recipe, RecipeIngredient, Tag)
+from .models import (Cart, CustomUser, Favorite, Follow, Ingredient, Recipe,
+                     RecipeIngredient, Tag)
 
 
 class CustomUserAdmin(admin.ModelAdmin):
