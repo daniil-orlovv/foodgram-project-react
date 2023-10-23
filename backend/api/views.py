@@ -75,7 +75,7 @@ class FollowViewSet(viewsets.ModelViewSet):
     def subscriptions(self, request, *args, **kwargs):
         paginator = FollowPagination()
         user = self.request.user
-        queryset = CustomUser.objects.filter(following__user=user)
+        queryset = CustomUser.objects.filter(user_followings__user=user)
         result_page = paginator.paginate_queryset(queryset, request)
         serializer = FollowSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
