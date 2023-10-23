@@ -24,6 +24,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     pagination_class = None
+    permission_classes = [permissions.AllowAny, ]
 
     @action(detail=True)
     def me(self, request, *args, **kwargs):
