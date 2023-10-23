@@ -111,39 +111,41 @@ class Favorite(models.Model):
         CustomUser, on_delete=models.CASCADE,
         blank=False,
         null=False,
+        related_name='user_favorites'
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
         blank=False,
         null=False,
-        related_name='favorite_recipe'
+        related_name='recipe_favorites'
     )
 
 
-class Shop(models.Model):
+class Cart(models.Model):
     user = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
         blank=False,
-        null=False
+        null=False,
+        related_name='user_cart'
     )
     item = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
         blank=False,
         null=False,
-        related_name='shop_item'
+        related_name='item_cart'
     )
 
 
 class Follow(models.Model):
     user = models.ForeignKey(CustomUser,
                              on_delete=models.CASCADE,
-                             related_name='follower')
+                             related_name='user_followings')
     author = models.ForeignKey(CustomUser,
                                on_delete=models.CASCADE,
-                               related_name='following')
+                               related_name='author_followers')
 
     class Meta:
         constraints = [
