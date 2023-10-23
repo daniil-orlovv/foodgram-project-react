@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from api.filters import IngredientFilter, RecipeFilter
 from api.pagination import FollowPagination
 from api.permissions import CreateIfAuth, UpdateIfAuthor
-from api.serializers import (CustomUserSerializer, FavoriteShopSerializer,
+from api.serializers import (CustomUserSerializer, FavoriteCartSerializer,
                              FollowSerializer, IngredientSerializer,
                              RecipeCrUpSerializer, RecipeReadSerializer,
                              TagSerializer)
@@ -112,7 +112,7 @@ class FollowViewSet(viewsets.ModelViewSet):
 
 class FavoriteViewSet(viewsets.ModelViewSet):
     queryset = Favorite.objects.all()
-    serializer_class = FavoriteShopSerializer
+    serializer_class = FavoriteCartSerializer
 
     def create(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
@@ -124,7 +124,7 @@ class FavoriteViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         Favorite.objects.create(user=user, recipe=recipe)
-        serializer = FavoriteShopSerializer(recipe)
+        serializer = FavoriteCartSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=['delete'])
@@ -141,7 +141,7 @@ class FavoriteViewSet(viewsets.ModelViewSet):
 
 
 class ShopViewSet(viewsets.ModelViewSet):
-    serializer_class = FavoriteShopSerializer
+    serializer_class = FavoriteCartSerializer
 
     def get_queryset(self):
         user = self.request.user.id
@@ -158,7 +158,7 @@ class ShopViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         Cart.objects.create(user=user, item=recipe)
-        serializer = FavoriteShopSerializer(recipe)
+        serializer = FavoriteCartSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=['delete'])
