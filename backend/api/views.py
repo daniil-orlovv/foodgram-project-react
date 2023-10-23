@@ -16,8 +16,8 @@ from api.serializers import (CustomUserSerializer, FavoriteShopSerializer,
                              FollowSerializer, IngredientSerializer,
                              RecipeCrUpSerializer, RecipeReadSerializer,
                              TagSerializer)
-from recipes.models import (Cart, CustomUser, Favorite, Follow, Ingredient, Recipe,
-                            RecipeIngredient, Tag)
+from recipes.models import (Cart, CustomUser, Favorite, Follow, Ingredient,
+                            Recipe, RecipeIngredient, Tag)
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
