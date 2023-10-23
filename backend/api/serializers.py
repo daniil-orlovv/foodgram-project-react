@@ -6,8 +6,8 @@ from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
-from recipes.models import (CustomUser, Favorite, Follow, Ingredient, Recipe,
-                            RecipeIngredient, RecipeTag, Shop, Tag)
+from recipes.models import (Cart, CustomUser, Favorite, Follow, Ingredient, Recipe,
+                            RecipeIngredient, RecipeTag, Tag)
 
 MAX_VALUE = 32000
 MIN_VALUE = 1
@@ -162,12 +162,8 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
-        if Shop.objects.filter(
-            user=request.user.id,
-            item=obj.id
-        ).exists():
-            return True
-        return False
+        user = request.user
+        return user.user_cart.filter(item=obj).exists()
 
     def validate_name(self, value):
         if len(value) > 200:
@@ -309,7 +305,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
 class ShopSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Shop
+        model = Cart
         fields = ('user', 'item')
 
 
