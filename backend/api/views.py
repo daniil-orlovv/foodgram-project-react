@@ -145,7 +145,7 @@ class ShopViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user.id
-        queryset = Recipe.objects.filter(shop_item__user=user)
+        queryset = Recipe.objects.filter(item_cart__user=user)
         return queryset
 
     def create(self, request, *args, **kwargs):
