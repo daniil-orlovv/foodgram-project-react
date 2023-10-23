@@ -55,7 +55,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
         request = self.context.get('request')
         if request and request.user.is_authenticated:
             user = request.user
-            return user.user_following.filter(author=obj).exists()
+            return user.user_followings.filter(author=obj).exists()
 
 
 class CustomUserSerializer(UserSerializer):
