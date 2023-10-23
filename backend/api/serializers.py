@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
+from api.utils import bulk_create_recipe_ingredients, bulk_create_recipe_tags
 from recipes.models import (Cart, CustomUser, Favorite, Follow, Ingredient,
                             Recipe, RecipeIngredient, RecipeTag, Tag)
 
@@ -168,22 +169,12 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
         return user.user_cart.filter(item=obj).exists()
 
     def create(self, validated_data):
-
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(**validated_data)
 
-        for ingredient in ingredients:
-            cur_ingr = ingredient.get('id')
-            cur_amount = ingredient.get('amount')
-
-            RecipeIngredient.objects.create(
-                recipe=recipe,
-                ingredient=cur_ingr,
-                amount=cur_amount
-            )
-        for tag_id in tags:
-            RecipeTag.objects.create(recipe=recipe, tag=tag_id)
+        bulk_create_recipe_ingredients(recipe, ingredients)
+        bulk_create_recipe_tags(recipe, tags)
 
         return recipe
 
@@ -286,7 +277,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
         if request and request.user.is_authenticated:
-            return Shop.objects.filter(
+            return Cart.objects.filter(
                 user=request.user.id,
                 item=obj.id
             ).exists()
