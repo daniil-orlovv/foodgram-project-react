@@ -183,24 +183,24 @@ class ShopViewSet(viewsets.ModelViewSet):
                 amount=Sum('amount'))
         for i in ingredients:
             ingredient_info = {
-                "name": i['ingredient__name'],
-                "unit": i['ingredient__measurement_unit'],
-                "amount": int(i['amount'])
+                'name': i['ingredient__name'],
+                'unit': i['ingredient__measurement_unit'],
+                'amount': int(i['amount'])
             }
             all_ingredients.append(ingredient_info)
 
-        font = "/app/api/fonts/Arial.ttf"
+        font = '/app/api/fonts/Arial.ttf'
         pdfmetrics.registerFont(TTFont('Arial', font))
-        file_pdf = Canvas("shop_list.pdf")
-        file_pdf.setFont("Arial", 12)
+        file_pdf = Canvas('shop_list.pdf')
+        file_pdf.setFont('Arial', 12)
         y = 750
         for i in all_ingredients:
-            ingredient_text = f"{i['name']} ({i['unit']}) — {i['amount']}"
+            ingredient_text = f'{i["name"]} ({i["unit"]}) — {i["amount"]}'
             file_pdf.drawString(50, y, ingredient_text)
             y -= 20
         file_pdf.showPage()
         file_pdf.save()
-        pdf_file_path = "shop_list.pdf"
+        pdf_file_path = 'shop_list.pdf'
         response = FileResponse(
             open(pdf_file_path, 'rb'), content_type='application/pdf')
         response[
