@@ -141,7 +141,7 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
         max_value=MAX_VALUE,
         min_value=MIN_VALUE
     )
-    name = serializers.CharField(max_value=MAX_LEN_NAME)
+    name = serializers.CharField(max_length=MAX_LEN_NAME)
 
     class Meta:
         model = Recipe
