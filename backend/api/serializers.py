@@ -6,7 +6,7 @@ from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
 from api.utils import bulk_create_recipe_ingredients, bulk_create_recipe_tags
-from recipes.models import (Cart, CustomUser, Follow, Ingredient, Recipe,
+from recipes.models import (Cart, CustomUser, Ingredient, Recipe,
                             RecipeIngredient, RecipeTag, Tag)
 
 MAX_VALUE = 32000
@@ -328,8 +328,5 @@ class FollowSerializer(serializers.ModelSerializer):
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
         if request and request.user.is_authenticated:
-            return Follow.objects.filter(
-                user=request.user.id,
-                author=obj.id
-            ).exists()
-        return False
+            user = request.user
+            return user.user_followings.filter(author=obj).exists()
