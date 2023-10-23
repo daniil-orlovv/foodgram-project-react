@@ -184,10 +184,12 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
         recipe = instance
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
+
         RecipeIngredient.objects.filter(recipe=recipe).delete()
         bulk_create_recipe_ingredients(recipe, ingredients)
         RecipeTag.objects.filter(recipe=recipe).delete()
         bulk_create_recipe_tags(recipe, tags)
+
         instance.image = validated_data.get('image', instance.image)
         instance.name = validated_data.get('name', instance.name)
         instance.text = validated_data.get('text', instance.text)
@@ -263,20 +265,14 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     def get_is_favorited(self, obj):
         request = self.context.get('request')
         if request and request.user.is_authenticated:
-            return Favorite.objects.filter(
-                user=request.user.id,
-                recipe=obj.id
-            ).exists()
-        return False
+            user = request.user
+            return user.user_favorites.filter(recipe=obj).exists()
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
         if request and request.user.is_authenticated:
-            return Cart.objects.filter(
-                user=request.user.id,
-                item=obj.id
-            ).exists()
-        return False
+            user = request.user
+            return user.user_cart.filter(item=obj).exists()
 
 
 class ShopSerializer(serializers.ModelSerializer):
