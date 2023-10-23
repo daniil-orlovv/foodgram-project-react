@@ -27,22 +27,19 @@ class RecipeFilter(django_filters.FilterSet):
         user = self.request.user
         if value and user.is_authenticated:
             return queryset.filter(favorite_recipe__user=user)
-        else:
-            return queryset
+        return queryset
 
     def filter_is_in_shopping_cart(self, queryset, name, value):
         user = self.request.user
         if value and user.is_authenticated:
             return queryset.filter(shop_item__user=user)
-        else:
-            return queryset
+        return queryset
 
     def filter_author(self, queryset, name, value):
         user = self.request.user
         if value and user.is_authenticated:
             return queryset.filter(author=value)
-        else:
-            return queryset
+        return queryset
 
 
 class IngredientFilter(django_filters.FilterSet):
