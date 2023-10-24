@@ -12,25 +12,25 @@ from rest_framework.response import Response
 from api.filters import IngredientFilter, RecipeFilter
 from api.pagination import FollowPagination
 from api.permissions import CreateIfAuth, UpdateIfAuthor
-from api.serializers import (CustomUserSerializer, FavoriteCartSerializer,
-                             FollowSerializer, IngredientSerializer,
-                             RecipeCrUpSerializer, RecipeReadSerializer,
-                             TagSerializer)
+from api.serializers import (FavoriteCartSerializer, FollowSerializer,
+                             IngredientSerializer, RecipeCrUpSerializer,
+                             RecipeReadSerializer, TagSerializer)
+
 from recipes.models import (Cart, CustomUser, Favorite, Follow, Ingredient,
                             Recipe, RecipeIngredient, Tag)
 
+# class CustomUserViewSet(viewsets.ModelViewSet):
+#     queryset = CustomUser.objects.all()
+#     serializer_class = CustomUserSerializer
+#     pagination_class = None
+#     permission_classes = [permissions.AllowAny, ]
 
-class CustomUserViewSet(viewsets.ModelViewSet):
-    queryset = CustomUser.objects.all()
-    serializer_class = CustomUserSerializer
-    pagination_class = None
-
-    @action(detail=True)
-    def me(self, request, *args, **kwargs):
-        user_id = request.user.id
-        user = get_object_or_404(CustomUser, id=user_id)
-        serializer = CustomUserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+#     @action(detail=True)
+#     def me(self, request, *args, **kwargs):
+#         user_id = request.user.id
+#         user = get_object_or_404(CustomUser, id=user_id)
+#         serializer = CustomUserSerializer(user)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
