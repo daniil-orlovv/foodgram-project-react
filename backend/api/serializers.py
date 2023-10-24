@@ -330,3 +330,12 @@ class FollowSerializer(serializers.ModelSerializer):
         if request and request.user.is_authenticated:
             user = request.user
             return user.user_followings.filter(author=obj).exists()
+
+    # def validate(self, data):
+    #     request = self.context.get('request')
+    #     user = request.user
+    #     if user == author:
+    #         return Response({
+    #             'error': 'Нельзя подписаться на самого себя!'},
+    #             status=status.HTTP_400_BAD_REQUEST
+    #         )
