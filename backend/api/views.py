@@ -15,7 +15,6 @@ from api.permissions import CreateIfAuth, UpdateIfAuthor
 from api.serializers import (FavoriteCartSerializer, FollowSerializer,
                              IngredientSerializer, RecipeCrUpSerializer,
                              RecipeReadSerializer, TagSerializer)
-
 from recipes.models import (Cart, CustomUser, Favorite, Follow, Ingredient,
                             Recipe, RecipeIngredient, Tag)
 
