@@ -30,6 +30,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
-    path('api/users/me/', me)
+    path('users/me/', me)
 
 ]
