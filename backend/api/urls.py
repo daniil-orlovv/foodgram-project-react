@@ -2,7 +2,8 @@ from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
 from .views import (CustomUserViewSet, FavoriteViewSet, FollowViewSet,
-                    IngredientViewSet, RecipeViewSet, ShopViewSet, TagViewSet)
+                    IngredientViewSet, RecipeViewSet, ShopViewSet, TagViewSet,
+                    me)
 
 router = SimpleRouter()
 
@@ -29,5 +30,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
+    path('api/users/me/', me())
 
 ]
