@@ -88,13 +88,16 @@ class FollowViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['delete'])
     def delete(self, request, *args, **kwargs):
+        user = request.user
         author_id = kwargs.get('id')
-        if not Follow.objects.filter(author=author_id).exists():
+        author = get_object_or_404(CustomUser, id=author_id)
+        objects = user.user_following.filter(author=author)
+        if not objects.exists():
             return Response({
                 'error': 'Вы не подписаны на этого автора!'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        Follow.objects.get(author=author_id).delete()
+        objects.first().delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
