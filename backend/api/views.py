@@ -19,6 +19,12 @@ from recipes.models import (Cart, CustomUser, Favorite, Follow, Ingredient,
                             Recipe, RecipeIngredient, Tag)
 
 
+SIZE_FONTS = 12
+X_POINT = 50
+Y_POINT = 750
+DECREASE_Y_POINT = 20
+
+
 class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [CreateIfAuth, UpdateIfAuthor]
     filter_backends = (DjangoFilterBackend,)
@@ -187,12 +193,12 @@ class ShopViewSet(viewsets.ModelViewSet):
         font = '/app/api/fonts/Arial.ttf'
         pdfmetrics.registerFont(TTFont('Arial', font))
         file_pdf = Canvas('shop_list.pdf')
-        file_pdf.setFont('Arial', 12)
-        y = 750
+        file_pdf.setFont('Arial', SIZE_FONTS)
+        y = Y_POINT
         for i in all_ingredients:
             ingredient_text = f'{i["name"]} ({i["unit"]}) — {i["amount"]}'
-            file_pdf.drawString(50, y, ingredient_text)
-            y -= 20
+            file_pdf.drawString(X_POINT, y, ingredient_text)
+            y -= DECREASE_Y_POINT
         file_pdf.showPage()
         file_pdf.save()
         pdf_file_path = 'shop_list.pdf'
