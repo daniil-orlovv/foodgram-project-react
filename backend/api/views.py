@@ -157,13 +157,15 @@ class ShopViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['delete'])
     def delete(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
+        user = request.user
         recipe = Recipe.objects.get(id=id_recipe)
-        if not Cart.objects.filter(item=recipe).exists():
+        objects = user.user_carts.filter(item=recipe)
+        if not objects.exists():
             return Response({
                 'error': 'Рецепт не добавлен в список покупок!'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        Cart.objects.get(item=recipe).delete()
+        objects.first().delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True)
