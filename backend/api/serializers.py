@@ -315,10 +315,7 @@ class FollowSerializer(serializers.ModelSerializer):
             user = request.user
             limit = request.GET.get('recipes_limit')
             recipes = user.author_recipes.filter(author=obj)[:int(limit)]
-        else:
-            user = request.user
-            recipes = user.author_recipes.filter(author=obj)
-        return FavoriteCartSerializer(recipes, many=True, read_only=True).data
+            return FavoriteCartSerializer(recipes, many=True, read_only=True).data
 
     def get_recipes_count(self, obj):
         request = self.context.get('request')
