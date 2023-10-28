@@ -317,6 +317,7 @@ class FollowSerializer(serializers.ModelSerializer):
             recipes = user.author_recipes.filter(author=obj)[:int(limit)]
             return FavoriteCartSerializer(
                 recipes, many=True, read_only=True).data
+        user = request.user
         recipes = user.author_recipes.filter(author=obj)
         return FavoriteCartSerializer(
             recipes, many=True, read_only=True).data
