@@ -6,16 +6,15 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen.canvas import Canvas
 from rest_framework import filters, permissions, status, viewsets
-from rest_framework.decorators import action, api_view
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from api.filters import IngredientFilter, RecipeFilter
 from api.pagination import FollowPagination
 from api.permissions import CreateIfAuth, UpdateIfAuthor
-from api.serializers import (CustomUserSerializer, FavoriteCartSerializer,
-                             FollowSerializer, IngredientSerializer,
-                             RecipeCrUpSerializer, RecipeReadSerializer,
-                             TagSerializer)
+from api.serializers import (FavoriteCartSerializer, FollowSerializer,
+                             IngredientSerializer, RecipeCrUpSerializer,
+                             RecipeReadSerializer, TagSerializer)
 from recipes.models import (Cart, CustomUser, Favorite, Follow, Ingredient,
                             Recipe, RecipeIngredient, Tag)
 
