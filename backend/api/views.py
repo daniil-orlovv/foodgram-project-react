@@ -72,7 +72,7 @@ class FollowViewSet(viewsets.ModelViewSet):
             })
         return paginator.get_paginated_response(serializer.data)
 
-    @action(detail=False)
+    @action(detail=False, methods=['post'])
     def subscribe(self, request, *args, **kwargs):
         user = request.user
         author_id = kwargs.get('id')
@@ -87,7 +87,7 @@ class FollowViewSet(viewsets.ModelViewSet):
             })
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True)
+    @action(detail=True, methods=['delete'])
     def unsubscribe(self, request, *args, **kwargs):
         author_id = kwargs.get('id')
         if not Follow.objects.filter(author=author_id).exists():
