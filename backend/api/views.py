@@ -145,7 +145,7 @@ class ShopViewSet(viewsets.ModelViewSet):
         id_recipe = kwargs.get('id')
         recipe = Recipe.objects.get(id=id_recipe)
         user = request.user
-        if Cart.objects.filter(user=user.id, item=recipe).exists():
+        if user.user_cart.filter(item=recipe).exists():
             return Response({
                 'error': 'Рецепт уже добавлен в список покупок!'},
                 status=status.HTTP_400_BAD_REQUEST
