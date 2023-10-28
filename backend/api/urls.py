@@ -15,8 +15,8 @@ router.register(r'recipes/(?P<id>\d+)/shopping_cart', ShopViewSet,
                 basename='shop')
 router.register(r'recipes/(?P<id>\d+)/favorite', FavoriteViewSet,
                 basename='favorite')
-router.register(r'users/(?P<id>\d+)/subscribe', FollowViewSet,
-                basename='follow')
+# router.register(r'users/(?P<id>\d+)/subscribe', FollowViewSet,
+#                 basename='follow')
 router.register('ingredients', IngredientViewSet, basename='ingredients')
 
 urlpatterns = [
@@ -27,6 +27,10 @@ urlpatterns = [
          ShopViewSet.as_view({'get': 'download'})),
     path('users/subscriptions/', FollowViewSet.as_view(
         {'get': 'subscriptions'})),
+    path(r'users/(?P<id>\d+)/subscribe/', FollowViewSet.as_view({
+        'post': 'subscribe',
+        'delete': 'unsubscribe',
+    }))
 
 
 ]
