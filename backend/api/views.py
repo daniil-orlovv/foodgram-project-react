@@ -20,48 +20,6 @@ from recipes.models import (Cart, CustomUser, Favorite, Follow, Ingredient,
                             Recipe, RecipeIngredient, Tag)
 
 
-class CustomDjoserUserViewSet(DjoserUserViewSet):
-
-    @action(detail=False)
-    def subscriptions(self, request, *args, **kwargs):
-        paginator = FollowPagination()
-        user = self.request.user
-        queryset = CustomUser.objects.filter(user_followings__user=user)
-        result_page = paginator.paginate_queryset(queryset, request)
-        serializer = FollowSerializer(result_page, many=True)
-        return paginator.get_paginated_response(serializer.data)
-
-    @action(detail=True, methods=['POST'])
-    def subscribe(self, request, *args, **kwargs):
-        user = request.user
-        author_id = kwargs.get('id')
-        author = get_object_or_404(CustomUser, id=author_id)
-        if user == author:
-            return Response({
-                'error': 'Нельзя подписаться на самого себя!'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        if Follow.objects.filter(user=user.id, author=author_id).exists():
-            return Response({
-                'error': 'Вы уже подписаны на этого автора!'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        Follow.objects.create(user=user, author=author)
-        serializer = FollowSerializer(author)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    @action(detail=True, methods=['delete'])
-    def subscribe(self, request, *args, **kwargs):
-        author_id = kwargs.get('id')
-        if not Follow.objects.filter(author=author_id).exists():
-            return Response({
-                'error': 'Вы не подписаны на этого автора!'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        Follow.objects.get(author=author_id).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [CreateIfAuth, UpdateIfAuthor]
     filter_backends = (DjangoFilterBackend,)
@@ -93,6 +51,49 @@ class IngredientViewSet(viewsets.ModelViewSet):
     pagination_class = None
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filterset_class = IngredientFilter
+
+
+class FollowViewSet(viewsets.ModelViewSet):
+    serializer_class = FollowSerializer
+    pagination_class = FollowPagination
+
+    @action(detail=False)
+    def subscriptions(self, request, *args, **kwargs):
+        paginator = FollowPagination()
+        user = self.request.user
+        queryset = CustomUser.objects.filter(user_followings__user=user)
+        result_page = paginator.paginate_queryset(queryset, request)
+        serializer = FollowSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        author_id = kwargs.get('id')
+        author = get_object_or_404(CustomUser, id=author_id)
+        if user == author:
+            return Response({
+                'error': 'Нельзя подписаться на самого себя!'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        if Follow.objects.filter(user=user.id, author=author_id).exists():
+            return Response({
+                'error': 'Вы уже подписаны на этого автора!'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        Follow.objects.create(user=user, author=author)
+        serializer = FollowSerializer(author)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['delete'])
+    def delete(self, request, *args, **kwargs):
+        author_id = kwargs.get('id')
+        if not Follow.objects.filter(author=author_id).exists():
+            return Response({
+                'error': 'Вы не подписаны на этого автора!'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        Follow.objects.get(author=author_id).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class FavoriteViewSet(viewsets.ModelViewSet):
