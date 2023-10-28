@@ -76,18 +76,14 @@ class FollowViewSet(viewsets.ModelViewSet):
         user = request.user
         author_id = kwargs.get('id')
         author = get_object_or_404(CustomUser, id=author_id)
-        if user == author:
-            return Response({
-                'error': 'Нельзя подписаться на самого себя!'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        if Follow.objects.filter(user=user.id, author=author_id).exists():
-            return Response({
-                'error': 'Вы уже подписаны на этого автора!'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
         Follow.objects.create(user=user, author=author)
-        serializer = FollowSerializer(author)
+        serializer = FollowSerializer(
+            author,
+            context={
+                'request': request,
+                'author': author,
+                'author_id': author_id
+            })
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=['delete'])

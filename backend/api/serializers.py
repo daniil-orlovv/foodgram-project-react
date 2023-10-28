@@ -6,7 +6,7 @@ from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
 from api.utils import bulk_create_recipe_ingredients, bulk_create_recipe_tags
-from recipes.models import (Cart, CustomUser, Ingredient, Recipe,
+from recipes.models import (Cart, CustomUser, Follow, Ingredient, Recipe,
                             RecipeIngredient, RecipeTag, Tag)
 
 MAX_VALUE = 32000
@@ -333,11 +333,14 @@ class FollowSerializer(serializers.ModelSerializer):
             user = request.user
             return user.user_followings.filter(author=obj).exists()
 
-    # def validate(self, data):
-    #     request = self.context.get('request')
-    #     user = request.user
-    #     if user == author:
-    #         return Response({
-    #             'error': 'Нельзя подписаться на самого себя!'},
-    #             status=status.HTTP_400_BAD_REQUEST
-    #         )
+    def validate(self, data):
+        request = self.context.get('request')
+        author = self.context.get('author')
+        author_id = self.context.get('author')
+        user = request.user
+        if user == author:
+            raise serializers.ValidationError(
+                'Нельзя подписаться на самого себя!')
+        if Follow.objects.filter(user=user.id, author=author_id).exists():
+            raise serializers.ValidationError(
+                'Вы уже подписаны на этого автора!')
