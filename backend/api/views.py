@@ -31,8 +31,8 @@ class CustomDjoserUserViewSet(DjoserUserViewSet):
         serializer = FollowSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
 
-    # @action(detail=True, methods=['post'])
-    def create(self, request, *args, **kwargs):
+    @action(detail=True, methods=['POST'])
+    def subscribe(self, request, *args, **kwargs):
         user = request.user
         author_id = kwargs.get('id')
         author = get_object_or_404(CustomUser, id=author_id)
@@ -50,8 +50,8 @@ class CustomDjoserUserViewSet(DjoserUserViewSet):
         serializer = FollowSerializer(author)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    # @action(detail=True, methods=['delete'])
-    def delete(self, request, *args, **kwargs):
+    @action(detail=True, methods=['delete'])
+    def subscribe(self, request, *args, **kwargs):
         author_id = kwargs.get('id')
         if not Follow.objects.filter(author=author_id).exists():
             return Response({
