@@ -1,4 +1,5 @@
 from django.urls import include, path
+from djoser.views import UserViewSet as DjoserUserViewSet
 from rest_framework.routers import SimpleRouter
 
 from .views import (FavoriteViewSet, FollowViewSet, IngredientViewSet,
@@ -6,6 +7,7 @@ from .views import (FavoriteViewSet, FollowViewSet, IngredientViewSet,
 
 router = SimpleRouter()
 
+router.register('users', DjoserUserViewSet, basename='users')
 router.register('tags', TagViewSet, basename='tags')
 router.register('recipes', RecipeViewSet, basename='recipes')
 router.register('cart', ShopViewSet, basename='get_shop_list')
