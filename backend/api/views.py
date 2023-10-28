@@ -2,6 +2,7 @@ from django.db.models import Sum
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from djoser.views import UserViewSet as DjoserUserViewSet
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen.canvas import Canvas
@@ -19,42 +20,7 @@ from recipes.models import (Cart, CustomUser, Favorite, Follow, Ingredient,
                             Recipe, RecipeIngredient, Tag)
 
 
-class RecipeViewSet(viewsets.ModelViewSet):
-    permission_classes = [CreateIfAuth, UpdateIfAuthor]
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = RecipeFilter
-
-    def get_queryset(self):
-        return Recipe.objects.all().order_by('-created')
-
-    def get_serializer_class(self):
-        if self.action in ['list', 'retrieve']:
-            return RecipeReadSerializer
-        return RecipeCrUpSerializer
-
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
-
-
-class TagViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
-    permission_classes = [permissions.AllowAny, ]
-    pagination_class = None
-
-
-class IngredientViewSet(viewsets.ModelViewSet):
-    queryset = Ingredient.objects.all()
-    serializer_class = IngredientSerializer
-    permission_classes = [permissions.AllowAny, ]
-    pagination_class = None
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    filterset_class = IngredientFilter
-
-
-class FollowViewSet(viewsets.ModelViewSet):
-    serializer_class = FollowSerializer
-    pagination_class = FollowPagination
+class CustomDjoserUserViewSet(DjoserUserViewSet):
 
     @action(detail=False)
     def subscriptions(self, request, *args, **kwargs):
@@ -93,6 +59,39 @@ class FollowViewSet(viewsets.ModelViewSet):
             )
         Follow.objects.get(author=author_id).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class RecipeViewSet(viewsets.ModelViewSet):
+    permission_classes = [CreateIfAuth, UpdateIfAuthor]
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = RecipeFilter
+
+    def get_queryset(self):
+        return Recipe.objects.all().order_by('-created')
+
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return RecipeReadSerializer
+        return RecipeCrUpSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+
+class TagViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    permission_classes = [permissions.AllowAny, ]
+    pagination_class = None
+
+
+class IngredientViewSet(viewsets.ModelViewSet):
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientSerializer
+    permission_classes = [permissions.AllowAny, ]
+    pagination_class = None
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filterset_class = IngredientFilter
 
 
 class FavoriteViewSet(viewsets.ModelViewSet):
