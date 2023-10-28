@@ -109,7 +109,7 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         id_recipe = kwargs.get('id')
         recipe = Recipe.objects.get(id=id_recipe)
         user = request.user
-        if Favorite.objects.filter(user=user.id, recipe=recipe).exists():
+        if user.user_favorites.filter(recipe=recipe).exists():
             return Response({
                 'error': 'Рецепт уже добавлен в избранное!'},
                 status=status.HTTP_400_BAD_REQUEST
