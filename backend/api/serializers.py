@@ -311,18 +311,16 @@ class FollowSerializer(serializers.ModelSerializer):
 
     def get_recipes(self, obj):
         request = self.context.get('request')
-        if request:
-            user = request.user
-            limit = request.GET.get('recipes_limit')
-            recipes = user.author_recipes.filter(author=obj)[:int(limit)]
-            return FavoriteCartSerializer(
-                recipes, many=True, read_only=True).data
+        user = request.user
+        limit = request.GET.get('recipes_limit')
+        recipes = user.author_recipes.filter(author=obj)[:int(limit)]
+        return FavoriteCartSerializer(
+            recipes, many=True, read_only=True).data
 
     def get_recipes_count(self, obj):
         request = self.context.get('request')
-        if request:
-            user = request.user
-            return user.author_recipes.filter(author=obj).count()
+        user = request.user
+        return user.author_recipes.filter(author=obj).count()
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
