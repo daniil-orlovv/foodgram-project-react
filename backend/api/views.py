@@ -19,20 +19,6 @@ from api.serializers import (CustomUserSerializer, FavoriteCartSerializer,
 from recipes.models import (Cart, CustomUser, Favorite, Follow, Ingredient,
                             Recipe, RecipeIngredient, Tag)
 
-# class CustomUserViewSet(viewsets.ModelViewSet):
-#     queryset = CustomUser.objects.all()
-#     serializer_class = CustomUserSerializer
-#     pagination_class = None
-#     permission_classes = [permissions.AllowAny, ]
-
-
-@api_view(['GET'])
-def me(self, request, *args, **kwargs):
-    user_id = request.user.id
-    user = get_object_or_404(CustomUser, id=user_id)
-    serializer = CustomUserSerializer(user)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [CreateIfAuth, UpdateIfAuthor]

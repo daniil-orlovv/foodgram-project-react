@@ -1,13 +1,13 @@
 from django.urls import include, path
+from djoser.views import UserViewSet as DjoserUserViewSet
 from rest_framework.routers import SimpleRouter
 
 from .views import (CustomUserViewSet, FavoriteViewSet, FollowViewSet,
-                    IngredientViewSet, RecipeViewSet, ShopViewSet, TagViewSet,
-                    me)
+                    IngredientViewSet, RecipeViewSet, ShopViewSet, TagViewSet)
 
 router = SimpleRouter()
 
-router.register('users', CustomUserViewSet, basename='users')
+router.register('users', DjoserUserViewSet, basename='users')
 router.register('tags', TagViewSet, basename='tags')
 router.register('recipes', RecipeViewSet, basename='recipes')
 router.register('cart', ShopViewSet, basename='get_shop_list')
@@ -24,12 +24,10 @@ router.register('ingredients', IngredientViewSet, basename='ingredients')
 urlpatterns = [
     path('recipes/download_shopping_cart/',
          ShopViewSet.as_view({'get': 'download'})),
-    # path('users/me/', CustomUserViewSet.as_view({'get': 'me'})),
     path('users/subscriptions/', FollowViewSet.as_view(
         {'get': 'subscriptions'})),
     path('', include(router.urls)),
     path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
-    path('users/me/', me)
 
 ]
