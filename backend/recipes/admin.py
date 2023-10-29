@@ -20,6 +20,7 @@ class IngredientInline(admin.TabularInline):
     model = RecipeIngredient
     extra = 1
     fields = ('recipe', 'ingredient', 'amount',)
+    min_num = 1
 
 
 class RecipeAdmin(admin.ModelAdmin):
