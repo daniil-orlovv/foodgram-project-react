@@ -148,7 +148,7 @@ class RecipeIngredient(models.Model):
     )
 
     class Meta:
-        oredering = ['-ingredient']
+        ordering = ['-ingredient']
 
 
 class Favorite(models.Model):
