@@ -160,8 +160,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'Content-Disposition'] = 'attachment; filename="shop_list.pdf"'
         return response
 
-    @action(detail=True, methods=['post'], url_path='favorite')
-    def add_to_fav(self, request, *args, **kwargs):
+    @action(detail=True, methods=['post'])
+    def favorite(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
         recipe = Recipe.objects.get(id=id_recipe)
         user = request.user
@@ -174,8 +174,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer = FavoriteCartSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=['delete'], url_path='favorite')
-    def del_from_fav(self, request, *args, **kwargs):
+    @favorite.mapping.delete
+    def unfavorite(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
         user = request.user
         recipe = Recipe.objects.get(id=id_recipe)
