@@ -8,6 +8,9 @@ class CustomUser(AbstractUser):
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
 
+    class Meta:
+        ordering = ['-email']
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ('username', 'first_name', 'last_name')
 
@@ -31,6 +34,9 @@ class Tag(models.Model):
         null=True,
         unique=True)
 
+    class Meta:
+        ordering = ['-name']
+
     def __str__(self):
         return self.name
 
@@ -38,6 +44,9 @@ class Tag(models.Model):
 class Ingredient(models.Model):
     name = models.CharField(max_length=150, blank=True)
     measurement_unit = models.CharField(max_length=20, blank=True)
+
+    class Meta:
+        ordering = ['-name']
 
     def __str__(self):
         return self.name
@@ -89,6 +98,7 @@ class RecipeTag(models.Model):
     )
 
     class Meta:
+        ordering = ['-tag']
         constraints = [
             models.UniqueConstraint(fields=['recipe', 'tag'],
                                     name='recipe_tag_unique')
@@ -109,6 +119,9 @@ class RecipeIngredient(models.Model):
     )
     amount = models.FloatField(blank=True, null=True)
 
+    class Meta:
+        oredering = ['-ingredient']
+
 
 class Favorite(models.Model):
     user = models.ForeignKey(
@@ -124,6 +137,9 @@ class Favorite(models.Model):
         null=False,
         related_name='recipe_favorites'
     )
+
+    class Meta:
+        ordering = ['-user']
 
 
 class Cart(models.Model):
@@ -142,6 +158,9 @@ class Cart(models.Model):
         related_name='item_cart'
     )
 
+    class Meta:
+        ordering = ['-user']
+
 
 class Follow(models.Model):
     user = models.ForeignKey(CustomUser,
@@ -152,6 +171,7 @@ class Follow(models.Model):
                                related_name='author_followers')
 
     class Meta:
+        oredering = ['-user']
         constraints = [
             models.UniqueConstraint(fields=['user', 'author'],
                                     name='user_author_unique')
