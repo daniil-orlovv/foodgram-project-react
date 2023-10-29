@@ -59,7 +59,7 @@ class CustomDjoserUserViewSet(DjoserUserViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=['delete'], url_path='subscribe',
-            permissions_classes=[AuthUserDelete])
+            permission_classes=[AuthUserDelete])
     def unfollow(self, request, *args, **kwargs):
         user = request.user
         author_id = kwargs.get('pk')
