@@ -46,7 +46,7 @@ class CustomDjoserUserViewSet(DjoserUserViewSet):
     @action(detail=True, methods=['post'], url_path='subscribe')
     def follow(self, request, *args, **kwargs):
         user = request.user
-        author_id = kwargs.get('id')
+        author_id = kwargs.get('pk')
         author = get_object_or_404(CustomUser, id=author_id)
         Follow.objects.create(user=user, author=author)
         serializer = FollowSerializer(
@@ -61,7 +61,7 @@ class CustomDjoserUserViewSet(DjoserUserViewSet):
     @action(detail=True, methods=['delete'], url_path='subscribe')
     def unfollow(self, request, *args, **kwargs):
         user = request.user
-        author_id = kwargs.get('id')
+        author_id = kwargs.get('pk')
         author = get_object_or_404(CustomUser, id=author_id)
         objects = user.user_following.filter(author=author)
         if not objects.exists():
@@ -95,7 +95,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[permissions.IsAuthenticated]
     )
     def add_to_shop_cart(self, request, *args, **kwargs):
-        id_recipe = kwargs.get('id')
+        id_recipe = kwargs.get('pk')
         recipe = Recipe.objects.get(id=id_recipe)
         user = request.user
         if user.user_cart.filter(item=recipe).exists():
@@ -114,7 +114,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[permissions.IsAuthenticated]
     )
     def del_from_shop_cart(self, request, *args, **kwargs):
-        id_recipe = kwargs.get('id')
+        id_recipe = kwargs.get('pk')
         user = request.user
         recipe = Recipe.objects.get(id=id_recipe)
         objects = user.user_carts.filter(item=recipe)
@@ -177,7 +177,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @favorite.mapping.delete
     def unfavorite(self, request, *args, **kwargs):
-        id_recipe = kwargs.get('id')
+        id_recipe = kwargs.get('pk')
         user = request.user
         recipe = Recipe.objects.get(id=id_recipe)
         objects = user.user_favorite.filter(recipe=recipe)
