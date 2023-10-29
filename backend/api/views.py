@@ -123,7 +123,6 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         serializer = FavoriteCartSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=['delete'])
     def delete(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
         user = request.user
@@ -159,7 +158,6 @@ class ShopViewSet(viewsets.ModelViewSet):
         serializer = FavoriteCartSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=['delete'])
     def delete(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
         user = request.user
