@@ -197,7 +197,7 @@ class Follow(models.Model):
                                verbose_name='Автор')
 
     class Meta:
-        oredering = ['-user']
+        ordering = ['-user']
         constraints = [
             models.UniqueConstraint(fields=['user', 'author'],
                                     name='user_author_unique')
