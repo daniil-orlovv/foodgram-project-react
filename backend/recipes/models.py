@@ -2,11 +2,19 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
+MIN_VALUE = 1
+MAX_VALUE = 32000
+
+
 class CustomUser(AbstractUser):
-    email = models.EmailField(max_length=254, unique=True)
-    username = models.CharField(max_length=150)
-    first_name = models.CharField(max_length=150)
-    last_name = models.CharField(max_length=150)
+    email = models.EmailField(
+        max_length=254,
+        unique=True,
+        verbose_name='Почта'
+    )
+    username = models.CharField(max_length=150, verbose_name='Юзернэйм')
+    first_name = models.CharField(max_length=150, verbose_name='Имя')
+    last_name = models.CharField(max_length=150, verbose_name='Фамилия')
 
     class Meta:
         ordering = ['-email']
@@ -18,21 +26,22 @@ class CustomUser(AbstractUser):
 class Tag(models.Model):
     name = models.CharField(
         max_length=200,
-        blank=False,
-        null=False,
-        unique=True
+        unique=True,
+        verbose_name='Название'
     )
     color = models.CharField(
         max_length=7,
-        blank=False,
         null=True,
         unique=True,
-        default='#00BFFF'
+        default='#00BFFF',
+        verbose_name='Цвет'
     )
     slug = models.SlugField(
         max_length=200,
         null=True,
-        unique=True)
+        unique=True,
+        verbose_name='Слаг'
+    )
 
     class Meta:
         ordering = ['-name']
@@ -42,8 +51,16 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=150, blank=True)
-    measurement_unit = models.CharField(max_length=20, blank=True)
+    name = models.CharField(
+        max_length=150,
+        blank=True,
+        verbose_name='Название'
+    )
+    measurement_unit = models.CharField(
+        max_length=20,
+        blank=True,
+        verbose_name='Единица измерения'
+    )
 
     class Meta:
         ordering = ['-name']
@@ -57,17 +74,24 @@ class Recipe(models.Model):
         CustomUser,
         on_delete=models.CASCADE,
         blank=True,
-        null=True,
-        related_name='author_recipes'
+        related_name='author_recipes',
+        verbose_name='Автор рецепта'
     )
-    name = models.CharField(max_length=200, blank=False, null=False)
-    image = models.ImageField(blank=False, null=False)
-    text = models.TextField(blank=False, null=False)
+    name = models.CharField(
+        max_length=200,
+        verbose_name='Название'
+    )
+    image = models.ImageField(verbose_name='Картинка')
+    text = models.TextField(verbose_name='Описание')
     tags = models.ManyToManyField(
         Tag,
         through='RecipeTag'
     )
-    cooking_time = models.CharField(max_length=5, blank=False, null=False)
+    cooking_time = models.PositiveSmallIntegerField(
+        min_value=MIN_VALUE,
+        max_value=MAX_VALUE,
+        verbose_name='Время приготовления'
+    )
     ingredients = models.ManyToManyField(
         Ingredient,
         through='RecipeIngredient'
@@ -90,11 +114,13 @@ class RecipeTag(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='recipetag_recipe'
+        related_name='recipetag_recipe',
+        verbose_name='Рецепт'
     )
     tag = models.ForeignKey(
         Tag,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Тег'
     )
 
     class Meta:
@@ -109,15 +135,22 @@ class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='recipes'
+        related_name='recipes',
+        verbose_name='Рецепт'
     )
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
         blank=True,
-        null=True,
+        verbose_name='Ингредиент'
     )
-    amount = models.FloatField(blank=True, null=True)
+    amount = models.PositiveSmallIntegerField(
+        min_value=MIN_VALUE,
+        max_value=MAX_VALUE,
+        blank=True,
+        null=True,
+        verbose_name='Количество'
+    )
 
     class Meta:
         oredering = ['-ingredient']
@@ -126,16 +159,14 @@ class RecipeIngredient(models.Model):
 class Favorite(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE,
-        blank=False,
-        null=False,
-        related_name='user_favorites'
+        related_name='user_favorites',
+        verbose_name='Пользователь'
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
-        related_name='recipe_favorites'
+        related_name='recipe_favorites',
+        verbose_name='Рецепт'
     )
 
     class Meta:
@@ -146,16 +177,14 @@ class Cart(models.Model):
     user = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
-        related_name='user_cart'
+        related_name='user_cart',
+        verbose_name='Пользователь'
     )
     item = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        blank=False,
-        null=False,
-        related_name='item_cart'
+        related_name='item_cart',
+        verbose_name='Рецепт'
     )
 
     class Meta:
@@ -165,10 +194,12 @@ class Cart(models.Model):
 class Follow(models.Model):
     user = models.ForeignKey(CustomUser,
                              on_delete=models.CASCADE,
-                             related_name='user_followings')
+                             related_name='user_followings',
+                             verbose_name='Пользователь')
     author = models.ForeignKey(CustomUser,
                                on_delete=models.CASCADE,
-                               related_name='author_followers')
+                               related_name='author_followers',
+                               verbose_name='Автор')
 
     class Meta:
         oredering = ['-user']
