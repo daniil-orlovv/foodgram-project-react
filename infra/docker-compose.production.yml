@@ -4,7 +4,6 @@ volumes:
   db:
   static:
   media:
-  docs:
 
 services:
 
@@ -33,6 +32,5 @@ services:
     volumes:
       - static:/backend_static/
       - media:/media/
-      - docs:/usr/share/nginx/html/
     depends_on:
       - db
