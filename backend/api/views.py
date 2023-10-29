@@ -18,7 +18,6 @@ from api.serializers import (FavoriteCartSerializer, FollowSerializer,
 from recipes.models import (Cart, CustomUser, Favorite, Follow, Ingredient,
                             Recipe, RecipeIngredient, Tag)
 
-
 SIZE_FONTS = 12
 X_POINT = 50
 Y_POINT = 750
