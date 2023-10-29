@@ -12,7 +12,7 @@ from rest_framework.response import Response
 
 from api.filters import IngredientFilter, RecipeFilter
 from api.pagination import FollowPagination
-from api.permissions import CreateIfAuth, UpdateIfAuthor
+from api.permissions import CreateIfAuth, UpdateIfAuthor, AuthUser
 from api.serializers import (FavoriteCartSerializer, FollowSerializer,
                              IngredientSerializer, RecipeCrUpSerializer,
                              RecipeReadSerializer, TagSerializer)
@@ -94,7 +94,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
         queryset = Recipe.objects.filter(item_cart__user=user)
         return queryset
 
-    @action(detail=True, methods=['post'], url_path='shopping_cart')
+    @action(
+        detail=True,
+        methods=['post'],
+        url_path='shopping_cart',
+        permission_classes=[AuthUser]
+    )
     def added_to_shopping_cart(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
         recipe = Recipe.objects.get(id=id_recipe)
@@ -108,7 +113,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer = FavoriteCartSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=['delete'], url_path='shopping_cart')
+    @action(
+        detail=True,
+        methods=['delete'],
+        url_path='shopping_cart',
+        permission_classes=[AuthUser]
+    )
     def delete_from_shopping_cart(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
         user = request.user
