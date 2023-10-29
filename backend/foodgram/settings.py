@@ -1,27 +1,22 @@
 import os
 from datetime import timedelta
 
+from dotenv import load_dotenv
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-# Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'yp86z$6vt4%d$ij!a0q06@dzpf_o7!tzi2ir8yb%+8)&4oy81y'
+SECRET_KEY = os.getenv('SECRET_KEY', default='secret_key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-CSRF_TRUSTED_ORIGINS = ['https://foodgrrram.ddns.net', 'http://158.160.65.28']
-ALLOWED_HOSTS = [
-    '158.160.65.28',
-    '127.0.0.1',
-    'backend',
-    'localhost',
-    'http://foodgrrram.ddns.net/'
-]
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
 
 
 # Application definition
