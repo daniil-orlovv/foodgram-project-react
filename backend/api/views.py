@@ -2,6 +2,7 @@ from django.db.models import Sum
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from djoser.views import UserViewSet as DjoserUserViewSet
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen.canvas import Canvas
@@ -24,6 +25,54 @@ Y_POINT = 750
 DECREASE_Y_POINT = 20
 
 
+class CustomDjoserUserViewSet(DjoserUserViewSet):
+
+    @action(detail=False, url_path='subscriptions')
+    def subscriptions(self, request, *args, **kwargs):
+        paginator = FollowPagination()
+        user = self.request.user
+        limit = self.request.query_params.get("recipes_limit", None)
+        queryset = CustomUser.objects.filter(user_followings__user=user)
+        result_page = paginator.paginate_queryset(queryset, request)
+        serializer = FollowSerializer(
+            result_page,
+            many=True,
+            context={
+                "limit": limit,
+                "request": request,
+            })
+        return paginator.get_paginated_response(serializer.data)
+
+    @action(detail=True, methods=['post'], url_path='subscribe')
+    def follow(self, request, *args, **kwargs):
+        user = request.user
+        author_id = kwargs.get('id')
+        author = get_object_or_404(CustomUser, id=author_id)
+        Follow.objects.create(user=user, author=author)
+        serializer = FollowSerializer(
+            author,
+            context={
+                'request': request,
+                'author': author,
+                'author_id': author_id
+            })
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['delete'], url_path='subscribe')
+    def unfollow(self, request, *args, **kwargs):
+        user = request.user
+        author_id = kwargs.get('id')
+        author = get_object_or_404(CustomUser, id=author_id)
+        objects = user.user_following.filter(author=author)
+        if not objects.exists():
+            return Response({
+                'error': 'Вы не подписаны на этого автора!'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        objects.first().delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [CreateIfAuth, UpdateIfAuthor]
     filter_backends = (DjangoFilterBackend,)
@@ -40,112 +89,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-
-class TagViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
-    permission_classes = [permissions.AllowAny, ]
-    pagination_class = None
-
-
-class IngredientViewSet(viewsets.ModelViewSet):
-    queryset = Ingredient.objects.all()
-    serializer_class = IngredientSerializer
-    permission_classes = [permissions.AllowAny, ]
-    pagination_class = None
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    filterset_class = IngredientFilter
-
-
-class FollowViewSet(viewsets.ModelViewSet):
-    serializer_class = FollowSerializer
-    pagination_class = FollowPagination
-
-    @action(detail=False)
-    def subscriptions(self, request, *args, **kwargs):
-        paginator = FollowPagination()
-        user = self.request.user
-        limit = self.request.query_params.get("recipes_limit", None)
-        queryset = CustomUser.objects.filter(user_followings__user=user)
-        result_page = paginator.paginate_queryset(queryset, request)
-        serializer = FollowSerializer(
-            result_page,
-            many=True,
-            context={
-                "limit": limit,
-                "request": request,
-            })
-        return paginator.get_paginated_response(serializer.data)
-
-    def create(self, request, *args, **kwargs):
-        user = request.user
-        author_id = kwargs.get('id')
-        author = get_object_or_404(CustomUser, id=author_id)
-        Follow.objects.create(user=user, author=author)
-        serializer = FollowSerializer(
-            author,
-            context={
-                'request': request,
-                'author': author,
-                'author_id': author_id
-            })
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    @action(detail=True, methods=['delete'])
-    def delete(self, request, *args, **kwargs):
-        user = request.user
-        author_id = kwargs.get('id')
-        author = get_object_or_404(CustomUser, id=author_id)
-        objects = user.user_following.filter(author=author)
-        if not objects.exists():
-            return Response({
-                'error': 'Вы не подписаны на этого автора!'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        objects.first().delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class FavoriteViewSet(viewsets.ModelViewSet):
-    queryset = Favorite.objects.all()
-    serializer_class = FavoriteCartSerializer
-
-    def create(self, request, *args, **kwargs):
-        id_recipe = kwargs.get('id')
-        recipe = Recipe.objects.get(id=id_recipe)
-        user = request.user
-        if user.user_favorites.filter(recipe=recipe).exists():
-            return Response({
-                'error': 'Рецепт уже добавлен в избранное!'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        Favorite.objects.create(user=user, recipe=recipe)
-        serializer = FavoriteCartSerializer(recipe)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def delete(self, request, *args, **kwargs):
-        id_recipe = kwargs.get('id')
-        user = request.user
-        recipe = Recipe.objects.get(id=id_recipe)
-        objects = user.user_favorite.filter(recipe=recipe)
-        if not objects.exists():
-            return Response({
-                'error': 'Рецепт не добавлен в избранное!'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        objects.first().delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class ShopViewSet(viewsets.ModelViewSet):
-    serializer_class = FavoriteCartSerializer
-
     def get_queryset(self):
         user = self.request.user.id
         queryset = Recipe.objects.filter(item_cart__user=user)
         return queryset
 
-    def create(self, request, *args, **kwargs):
+    @action(detail=True, methods=['post'], url_path='shopping_cart')
+    def added_to_shopping_cart(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
         recipe = Recipe.objects.get(id=id_recipe)
         user = request.user
@@ -158,7 +108,8 @@ class ShopViewSet(viewsets.ModelViewSet):
         serializer = FavoriteCartSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def delete(self, request, *args, **kwargs):
+    @action(detail=True, methods=['delete'], url_path='shopping_cart')
+    def delete_from_shopping_cart(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
         user = request.user
         recipe = Recipe.objects.get(id=id_recipe)
@@ -171,7 +122,7 @@ class ShopViewSet(viewsets.ModelViewSet):
         objects.first().delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=True)
+    @action(detail=True, url_path='download_shopping_cart')
     def download(self, request, *args, **kwargs):
         all_ingredients = []
         ingredients = RecipeIngredient.objects.filter(
@@ -204,3 +155,47 @@ class ShopViewSet(viewsets.ModelViewSet):
         response[
             'Content-Disposition'] = 'attachment; filename="shop_list.pdf"'
         return response
+
+    @action(detail=True, methods=['post'], url_path='favorite')
+    def add_to_fav(self, request, *args, **kwargs):
+        id_recipe = kwargs.get('id')
+        recipe = Recipe.objects.get(id=id_recipe)
+        user = request.user
+        if user.user_favorites.filter(recipe=recipe).exists():
+            return Response({
+                'error': 'Рецепт уже добавлен в избранное!'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        Favorite.objects.create(user=user, recipe=recipe)
+        serializer = FavoriteCartSerializer(recipe)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['delete'], url_path='favorite')
+    def del_from_fav(self, request, *args, **kwargs):
+        id_recipe = kwargs.get('id')
+        user = request.user
+        recipe = Recipe.objects.get(id=id_recipe)
+        objects = user.user_favorite.filter(recipe=recipe)
+        if not objects.exists():
+            return Response({
+                'error': 'Рецепт не добавлен в избранное!'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        objects.first().delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class TagViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    permission_classes = [permissions.AllowAny, ]
+    pagination_class = None
+
+
+class IngredientViewSet(viewsets.ModelViewSet):
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientSerializer
+    permission_classes = [permissions.AllowAny, ]
+    pagination_class = None
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filterset_class = IngredientFilter
