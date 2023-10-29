@@ -13,3 +13,10 @@ class CreateIfAuth(permissions.BasePermission):
         if request.method == 'POST':
             return request.user.is_authenticated
         return True
+
+
+class AuthUser(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.method in ['POST', 'DELETE']:
+            return request.user.is_authenticated
+        return True
