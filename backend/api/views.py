@@ -12,7 +12,7 @@ from rest_framework.response import Response
 
 from api.filters import IngredientFilter, RecipeFilter
 from api.pagination import FollowPagination
-# from api.permissions import AuthUser
+from api.permissions import AuthUserDelete
 from api.serializers import (FavoriteCartSerializer, FollowSerializer,
                              IngredientSerializer, RecipeCrUpSerializer,
                              RecipeReadSerializer, TagSerializer)
@@ -58,7 +58,8 @@ class CustomDjoserUserViewSet(DjoserUserViewSet):
             })
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=['delete'], url_path='subscribe')
+    @action(detail=True, methods=['delete'], url_path='subscribe',
+            permissions_classes=[AuthUserDelete])
     def unfollow(self, request, *args, **kwargs):
         user = request.user
         author_id = kwargs.get('pk')
@@ -92,7 +93,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         detail=True,
         methods=['post'],
         url_path='shopping_cart',
-        permission_classes=[permissions.IsAuthenticated]
+        permission_classes=[AuthUserDelete]
     )
     def add_to_shop_cart(self, request, *args, **kwargs):
         id_recipe = kwargs.get('pk')
@@ -111,7 +112,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         detail=True,
         methods=['delete'],
         url_path='shopping_cart',
-        permission_classes=[permissions.IsAuthenticated]
+        permission_classes=[AuthUserDelete]
     )
     def del_from_shop_cart(self, request, *args, **kwargs):
         id_recipe = kwargs.get('pk')
