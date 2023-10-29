@@ -91,9 +91,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(
         detail=True,
         methods=['post'],
-        url_path='shopping_cart'
+        url_path='shopping_cart',
+        permission_classes=[permissions.IsAuthenticated]
     )
-    def added_to_shopping_cart(self, request, *args, **kwargs):
+    def add_to_shop_cart(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
         recipe = Recipe.objects.get(id=id_recipe)
         user = request.user
@@ -109,9 +110,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(
         detail=True,
         methods=['delete'],
-        url_path='shopping_cart'
+        url_path='shopping_cart',
+        permission_classes=[permissions.IsAuthenticated]
     )
-    def delete_from_shopping_cart(self, request, *args, **kwargs):
+    def del_from_shop_cart(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
         user = request.user
         recipe = Recipe.objects.get(id=id_recipe)
