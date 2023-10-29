@@ -87,8 +87,6 @@ class Recipe(models.Model):
         through='RecipeTag'
     )
     cooking_time = models.PositiveSmallIntegerField(
-        min_value=MIN_VALUE,
-        max_value=MAX_VALUE,
         verbose_name='Время приготовления'
     )
     ingredients = models.ManyToManyField(
