@@ -163,6 +163,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def favorite(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
+        print(id_recipe)
         recipe = Recipe.objects.get(id=id_recipe)
         user = request.user
         if user.user_favorites.filter(recipe=recipe).exists():
