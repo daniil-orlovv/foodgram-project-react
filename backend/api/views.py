@@ -63,7 +63,7 @@ class CustomDjoserUserViewSet(DjoserUserViewSet):
         user = request.user
         author_id = kwargs.get('pk')
         author = get_object_or_404(CustomUser, id=author_id)
-        objects = user.user_following.filter(author=author)
+        objects = user.user_followings.filter(author=author)
         if not objects.exists():
             return Response({
                 'error': 'Вы не подписаны на этого автора!'},
@@ -117,7 +117,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         id_recipe = kwargs.get('pk')
         user = request.user
         recipe = Recipe.objects.get(id=id_recipe)
-        objects = user.user_carts.filter(item=recipe)
+        objects = user.user_cart.filter(item=recipe)
         if not objects.exists():
             return Response({
                 'error': 'Рецепт не добавлен в список покупок!'},
@@ -180,7 +180,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         id_recipe = kwargs.get('pk')
         user = request.user
         recipe = Recipe.objects.get(id=id_recipe)
-        objects = user.user_favorite.filter(recipe=recipe)
+        objects = user.user_favorites.filter(recipe=recipe)
         if not objects.exists():
             return Response({
                 'error': 'Рецепт не добавлен в избранное!'},
