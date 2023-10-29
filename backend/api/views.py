@@ -27,7 +27,7 @@ DECREASE_Y_POINT = 20
 
 class CustomDjoserUserViewSet(DjoserUserViewSet):
 
-    @action(detail=False, url_path='subscriptions')
+    @action(detail=False)
     def subscriptions(self, request, *args, **kwargs):
         paginator = FollowPagination()
         user = self.request.user
@@ -88,16 +88,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    def get_queryset(self):
-        user = self.request.user.id
-        queryset = Recipe.objects.filter(item_cart__user=user)
-        return queryset
-
     @action(
         detail=True,
         methods=['post'],
-        url_path='shopping_cart',
-        permission_classes=[AuthUser]
+        url_path='shopping_cart'
     )
     def added_to_shopping_cart(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
@@ -115,8 +109,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(
         detail=True,
         methods=['delete'],
-        url_path='shopping_cart',
-        permission_classes=[AuthUser]
+        url_path='shopping_cart'
     )
     def delete_from_shopping_cart(self, request, *args, **kwargs):
         id_recipe = kwargs.get('id')
