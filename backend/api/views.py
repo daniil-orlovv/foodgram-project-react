@@ -108,12 +108,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer = FavoriteCartSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(
-        detail=True,
-        methods=['delete'],
-        url_path='shopping_cart',
-        permission_classes=[AuthUserDelete]
-    )
+    @add_to_shop_cart.mapping.delete
     def del_from_shop_cart(self, request, *args, **kwargs):
         id_recipe = kwargs.get('pk')
         user = request.user
