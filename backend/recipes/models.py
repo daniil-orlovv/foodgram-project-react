@@ -105,6 +105,7 @@ class Recipe(models.Model):
     def added_to_fav(self):
         result = Favorite.objects.filter(recipe=self.id)
         return result.count()
+    # Это же нужно для отображения в админке - кол-во добавлений в избранное
 
 
 class RecipeTag(models.Model):
