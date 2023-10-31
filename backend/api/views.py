@@ -139,11 +139,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
         pdfmetrics.registerFont(TTFont('Arial', font))
         file_pdf = Canvas('shop_list.pdf')
         file_pdf.setFont('Arial', SIZE_FONTS)
-        y = Y_POINT
-        for i in all_ingredients:
-            ingredient_text = f'{i["name"]} ({i["unit"]}) — {i["amount"]}'
-            file_pdf.drawString(X_POINT, y, ingredient_text)
-            y -= DECREASE_Y_POINT
+        y_coordinate = Y_POINT
+        for ingredient in all_ingredients:
+            ingredient_text = (f'{ingredient["name"]}'
+                               f'({ingredient["unit"]}) — '
+                               f'{ingredient["amount"]}')
+            file_pdf.drawString(X_POINT, y_coordinate, ingredient_text)
+            y_coordinate -= DECREASE_Y_POINT
         file_pdf.showPage()
         file_pdf.save()
         pdf_file_path = 'shop_list.pdf'
@@ -156,7 +158,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def favorite(self, request, *args, **kwargs):
         id_recipe = kwargs.get('pk')
-        print(id_recipe)
         recipe = Recipe.objects.get(id=id_recipe)
         user = request.user
         if user.user_favorites.filter(recipe=recipe).exists():
