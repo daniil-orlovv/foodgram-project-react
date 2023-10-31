@@ -7,7 +7,7 @@ from rest_framework import serializers
 
 from api.utils import bulk_create_recipe_ingredients, bulk_create_recipe_tags
 from recipes.models import (Cart, CustomUser, Ingredient, Recipe,
-                            RecipeIngredient, RecipeTag, Tag)
+                            RecipeIngredient, Tag)
 
 MAX_VALUE = 32000
 MIN_VALUE = 1
@@ -184,9 +184,9 @@ class RecipeCrUpSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
 
-        RecipeIngredient.objects.filter(recipe=recipe).delete()
+        recipe.recipe_recipeingredients.all().delete()
         bulk_create_recipe_ingredients(recipe, ingredients)
-        RecipeTag.objects.filter(recipe=recipe).delete()
+        recipe.recipe_recipetags.all().delete()
         bulk_create_recipe_tags(recipe, tags)
 
         instance.image = validated_data.get('image', instance.image)
@@ -229,7 +229,7 @@ class RecipeIngredientReadSerializer(serializers.ModelSerializer):
 class RecipeReadSerializer(serializers.ModelSerializer):
     ingredients = RecipeIngredientReadSerializer(
         many=True,
-        source='recipes',
+        source='recipe_recipeingredients',
         read_only=True
     )
     tags = TagSerializer(
