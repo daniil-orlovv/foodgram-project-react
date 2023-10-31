@@ -70,7 +70,7 @@ class CustomDjoserUserViewSet(DjoserUserViewSet):
                 'error': 'Вы не подписаны на этого автора!'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        objects.first().delete()
+        objects.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
