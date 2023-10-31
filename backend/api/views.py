@@ -116,7 +116,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 'error': 'Рецепт не добавлен в список покупок!'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        objects.first().delete()
+        objects.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, url_path='download_shopping_cart')
