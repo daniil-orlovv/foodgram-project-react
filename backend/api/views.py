@@ -43,7 +43,11 @@ class CustomDjoserUserViewSet(DjoserUserViewSet):
             })
         return paginator.get_paginated_response(serializer.data)
 
-    @action(detail=True, methods=['post'], url_path='subscribe')
+    @action(
+        detail=True,
+        methods=['post'],
+        url_path='subscribe',
+        permission_classes=[AuthUserDelete])
     def follow(self, request, *args, **kwargs):
         user = request.user
         author_id = kwargs.get('pk')
@@ -58,8 +62,7 @@ class CustomDjoserUserViewSet(DjoserUserViewSet):
             })
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=['delete'], url_path='subscribe',
-            permission_classes=[AuthUserDelete])
+    @follow.mapping.delete
     def unfollow(self, request, *args, **kwargs):
         user = request.user
         author_id = kwargs.get('pk')
