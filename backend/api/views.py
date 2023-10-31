@@ -123,7 +123,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         objects.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=True, url_path='download_shopping_cart')
+    @action(methods=['get'], detail=True, url_path='download_shopping_cart')
     def download(self, request, *args, **kwargs):
         all_ingredients = []
         ingredients = RecipeIngredient.objects.filter(
