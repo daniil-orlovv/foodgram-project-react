@@ -75,6 +75,7 @@ class CustomDjoserUserViewSet(DjoserUserViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
+    queryset = Recipe.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
