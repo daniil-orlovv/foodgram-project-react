@@ -50,7 +50,7 @@ class CustomDjoserUserViewSet(DjoserUserViewSet):
         permission_classes=[AuthUserDelete])
     def follow(self, request, *args, **kwargs):
         user = request.user
-        author_id = kwargs.get('pk')
+        author_id = kwargs.get('id')
         author = get_object_or_404(CustomUser, id=author_id)
         Follow.objects.create(user=user, author=author)
         serializer = FollowSerializer(
@@ -65,7 +65,7 @@ class CustomDjoserUserViewSet(DjoserUserViewSet):
     @follow.mapping.delete
     def unfollow(self, request, *args, **kwargs):
         user = request.user
-        author_id = kwargs.get('pk')
+        author_id = kwargs.get('id')
         author = get_object_or_404(CustomUser, id=author_id)
         objects = user.user_followings.filter(author=author)
         if not objects.exists():
