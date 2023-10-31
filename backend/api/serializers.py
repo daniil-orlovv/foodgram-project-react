@@ -322,8 +322,7 @@ class FollowSerializer(serializers.ModelSerializer):
     def get_recipes_count(self, obj):
         request = self.context.get('request')
         if request:
-            user = request.user
-            return user.author_recipes.filter(author=obj).count()
+            return obj.author_recipes.all().count()
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
