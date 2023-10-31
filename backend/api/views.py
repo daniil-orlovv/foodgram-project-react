@@ -33,7 +33,7 @@ class CustomDjoserUserViewSet(DjoserUserViewSet):
         paginator = FollowPagination()
         user = self.request.user
         limit = self.request.query_params.get('recipes_limit', None)
-        queryset = CustomUser.objects.filter(user_followings__user=user)
+        queryset = CustomUser.objects.filter(author_followers__user=user)
         result_page = paginator.paginate_queryset(queryset, request)
         serializer = FollowSerializer(
             result_page,
