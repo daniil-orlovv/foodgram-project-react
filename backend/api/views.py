@@ -127,11 +127,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ).values(
             'ingredient__name', 'ingredient__measurement_unit').annotate(
                 amount=Sum('amount'))
-        for i in ingredients:
+        for ingredient in ingredients:
             ingredient_info = {
-                'name': i['ingredient__name'],
-                'unit': i['ingredient__measurement_unit'],
-                'amount': int(i['amount'])
+                'name': ingredient['ingredient__name'],
+                'unit': ingredient['ingredient__measurement_unit'],
+                'amount': int(ingredient['amount'])
             }
             all_ingredients.append(ingredient_info)
 
