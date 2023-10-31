@@ -26,6 +26,7 @@ DECREASE_Y_POINT = 20
 
 
 class CustomDjoserUserViewSet(DjoserUserViewSet):
+    queryset = CustomUser
 
     @action(detail=False)
     def subscriptions(self, request, *args, **kwargs):
