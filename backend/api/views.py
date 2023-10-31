@@ -28,12 +28,6 @@ DECREASE_Y_POINT = 20
 class CustomDjoserUserViewSet(DjoserUserViewSet):
     queryset = CustomUser
 
-    def retrieve(self, request, *args, **kwargs):
-        id_user = kwargs.get('id')
-        user = get_object_or_404(CustomUser, id=id_user)
-        serializer = FollowSerializer(user)
-        return Response(serializer.data)
-
     @action(detail=False)
     def subscriptions(self, request, *args, **kwargs):
         paginator = FollowPagination()
