@@ -54,3 +54,5 @@
     `docker compose up`
 
     Проверьте работу сайта по вашему домену
+
+    foodgrrram.ddns.net
