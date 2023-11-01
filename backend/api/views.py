@@ -127,7 +127,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def download(self, request, *args, **kwargs):
         all_ingredients = []
         ingredients = RecipeIngredient.objects.filter(
-            recipe__author=request.user.username
+            recipe__author__username=request.user.username
         ).values(
             'ingredient__name', 'ingredient__measurement_unit').annotate(
                 amount=Sum('amount'))
