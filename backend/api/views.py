@@ -13,10 +13,9 @@ from rest_framework.response import Response
 from api.filters import IngredientFilter, RecipeFilter
 from api.pagination import FollowPagination
 from api.permissions import AuthUserDelete
-from api.serializers import (CustomUserSerializer, FavoriteCartSerializer,
-                             FollowSerializer, IngredientSerializer,
-                             RecipeCrUpSerializer, RecipeReadSerializer,
-                             TagSerializer)
+from api.serializers import (FavoriteCartSerializer, FollowSerializer,
+                             IngredientSerializer, RecipeCrUpSerializer,
+                             RecipeReadSerializer, TagSerializer)
 from recipes.models import (Cart, CustomUser, Favorite, Follow, Ingredient,
                             Recipe, RecipeIngredient, Tag)
 
