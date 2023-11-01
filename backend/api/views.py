@@ -15,7 +15,8 @@ from api.pagination import FollowPagination
 from api.permissions import AuthUserDelete
 from api.serializers import (FavoriteCartSerializer, FollowSerializer,
                              IngredientSerializer, RecipeCrUpSerializer,
-                             RecipeReadSerializer, TagSerializer)
+                             RecipeReadSerializer, TagSerializer,
+                              CustomUserSerializer)
 from recipes.models import (Cart, CustomUser, Favorite, Follow, Ingredient,
                             Recipe, RecipeIngredient, Tag)
 
@@ -26,6 +27,7 @@ DECREASE_Y_POINT = 20
 
 
 class CustomDjoserUserViewSet(DjoserUserViewSet):
+    serializer_class = CustomUserSerializer
     queryset = CustomUser
 
     @action(detail=False)
