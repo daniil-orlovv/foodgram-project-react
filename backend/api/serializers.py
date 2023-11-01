@@ -55,6 +55,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
         if request and request.user.is_authenticated:
             user = request.user
             return user.user_followings.filter(author=obj).exists()
+        return False
 
 
 class CustomUserSerializer(UserSerializer):
@@ -77,6 +78,7 @@ class CustomUserSerializer(UserSerializer):
         if request and request.user.is_authenticated:
             user = request.user
             return user.user_followings.filter(author=obj).exists()
+        return False
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -266,12 +268,14 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         if request and request.user.is_authenticated:
             user = request.user
             return user.user_favorites.filter(recipe=obj).exists()
+        return False
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
         if request and request.user.is_authenticated:
             user = request.user
             return user.user_cart.filter(item=obj).exists()
+        return False
 
 
 class ShopSerializer(serializers.ModelSerializer):
@@ -323,16 +327,18 @@ class FollowSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if request:
             return obj.author_recipes.all().count()
+        return False
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
         if request and request.user.is_authenticated:
             user = request.user
             return user.user_followings.filter(author=obj).exists()
+        return False
 
     def validate(self, data):
-        request = self.context.get('request')
-        author = self.context.get('author')
+        request = self.context['request']
+        author = self.context['author']
         user = request.user
         if user == author:
             raise serializers.ValidationError(
