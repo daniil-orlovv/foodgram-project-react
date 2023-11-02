@@ -26,7 +26,7 @@ class RecipePermissions(permissions.BasePermission):
     def has_permission(self, request, view):
         user = request.user
         if request.method == 'GET':
-            return not user.is_authenticated
+            return True
         elif request.method in ['GET', 'POST']:
             return user.is_authenticated
 
