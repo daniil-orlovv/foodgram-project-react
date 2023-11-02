@@ -123,8 +123,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         objects.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(methods=['get'], detail=True, url_path='download_shopping_cart')
-    def download(self, request, *args, **kwargs):
+    @action(methods=['get'], detail=True)
+    def download_shopping_cart(self, request, *args, **kwargs):
         all_ingredients = []
         ingredients = RecipeIngredient.objects.filter(
             recipe__author__username=request.user.username
