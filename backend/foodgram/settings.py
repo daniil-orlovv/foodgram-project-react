@@ -133,7 +133,7 @@ DJOSER = {
         'user': 'api.serializers.CustomUserSerializer',
         'current_user': 'api.serializers.CustomUserSerializer',
     },
-    'USER_ID_FIELD': 'id'
+    'HIDE_USERS': False
 }
 
 AUTH_USER_MODEL = 'recipes.CustomUser'
