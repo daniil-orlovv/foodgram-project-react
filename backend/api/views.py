@@ -12,7 +12,7 @@ from rest_framework.response import Response
 
 from api.filters import IngredientFilter, RecipeFilter
 from api.pagination import FollowPagination
-from api.permissions import AuthUserDelete
+from api.permissions import AuthUserDelete, RecipePermissions
 from api.serializers import (FavoriteCartSerializer, FollowSerializer,
                              IngredientSerializer, RecipeCrUpSerializer,
                              RecipeReadSerializer, TagSerializer)
@@ -79,6 +79,7 @@ class CustomDjoserUserViewSet(DjoserUserViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
+    permission_classes = RecipePermissions
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 

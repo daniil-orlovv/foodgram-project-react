@@ -20,3 +20,17 @@ class AuthUserDelete(permissions.BasePermission):
         if request.method == 'DELETE':
             return request.user.is_authenticated
         return True
+
+
+class RecipePermissions(permissions.BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        if request.method == 'GET':
+            return not user.is_authenticated
+        elif request.method in ['GET', 'POST']:
+            return user.is_authenticated
+
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+        if request.method in ['PUT', 'DELETE']:
+            return obj.author == user
