@@ -34,3 +34,5 @@ class RecipePermissions(permissions.BasePermission):
         user = request.user
         if request.method in ['PUT', 'DELETE']:
             return obj.author == user
+        if request.method == 'GET':
+            return request.user.is_authenticated
