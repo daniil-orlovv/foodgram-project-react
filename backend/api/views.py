@@ -79,7 +79,7 @@ class CustomDjoserUserViewSet(DjoserUserViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    permission_classes = RecipePermissions
+    permission_classes = [RecipePermissions]
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
