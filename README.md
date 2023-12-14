@@ -14,6 +14,9 @@
 - **gunicorn==20.1.0**
 - **python-dotenv==1.0.0**
 
+## Зачем был реализован проект?
+Закрепление всех навыков приобретенных за время проектной деятельности.
+
 ## Технологии
 `Django`, `Django REST Framework`, `Gunicorn`, `Nginx`, `Docker`, `Docker Compose`, `Docker Hub`, `GitHub Actions`, `PostgreSQL`, `Djoser`, `Reportlab`, `yaml`, `redoc`
 
